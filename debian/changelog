@@ -1,0 +1,99 @@
+screenruler (0.960+bzr41+deb10-1) unstable; urgency=medium
+
+  * added myself as uploader
+  * recompiled for debian10
+  * upgraded dh level to 11, Standards-Version to 4.3.0
+
+ -- Georges Khaznadar <georgesk@debian.org>  Wed, 03 Jul 2019 08:38:10 +0200
+
+screenruler (0.960+bzr41-1.2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Apply patch for Ruby 1.9 support, drop hardcoding of 1.8 (Closes: #734954)
+
+ -- Christian Hofstaedtler <zeha@debian.org>  Thu, 16 Jan 2014 11:08:20 +0100
+
+screenruler (0.960+bzr41-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * debian/control: Replace obsolete libgettext-ruby1.8 dependency with
+    ruby-gettext. (Closes: #709336)
+
+ -- Felix Geyer <fgeyer@debian.org>  Mon, 03 Jun 2013 18:20:27 +0200
+
+screenruler (0.960+bzr41-1) unstable; urgency=low
+
+  * New upstream version + modifications from trunk:
+     - Port to GtkBuilder and replace GConf with a YAML file (Closes: #639437,
+       #654710).
+     - Handle symlinks in screenruler.rb.
+     - Added a help window and internationalization support.
+     - Various bug fixes.
+  * debian/control:
+     - Update dependencies.
+  * debian/screenruler.xpm:
+     - Fix typo in Catalan translation and add a German translation.
+  * debian/watch:
+     - Delete it (no point, upstream version numbers are inconsistent).
+  * screenruler.rb:
+     - Hardcode Ruby 1.8.
+  * Change to source format "3.0 (quilt)" and debhelper compatibility
+    version 7, switch from CDBS to dh and bump Standards-Version to 3.9.2.
+
+ -- Siegfried-Angel Gevatter Pujals <rainct@ubuntu.com>  Tue, 24 Jan 2012 23:43:17 +0100
+
+screenruler (0.900+bzr27-1) experimental; urgency=low
+
+  * New upstream version + modifications from trunk:
+     - Improved the "Track Mouse" feature.
+  * debian/control:
+     - Set libgtk2-ruby dependency minimum version to 0.18.1 (Closes: #508788).
+     - Bump Standards-Version to 3.9.1.
+  * Update copyright years and debian/install.
+  * Add debian/source/format with content "1.0".
+
+ -- Siegfried-Angel Gevatter Pujals <rainct@ubuntu.com>  Sun, 05 Dec 2010 14:13:41 +0100
+
+screenruler (0.891+bzr25-1) unstable; urgency=low
+
+  The "waiting for a sponsor since a year" release.
+
+  * New upstream version + modifications from trunk:
+     - Ask GDK for DPI settings, and allow users to override them in
+       the configuration dialogue (Closes: #509049) (LP: #309159).
+     - All patches except for hardcode-data-path.patch are upstreamed.
+  * debian/{control,watch,copyright}:
+     - Launchpad project name changed from "screen-ruler" to "screenruler"
+       (Closes: #550767).
+  * debian/copyright:
+     - Change it to the machine readable format.
+  * debian/screenruler.xpm:
+     - Change it to the new tango-style image.
+  * debian/{rules,install,links}:
+     - Install screenruler.rb into /usr/share/screenruler and symlink it
+       from there into /usr/bin.
+
+ -- Siegfried-Angel Gevatter Pujals <rainct@ubuntu.com>  Tue, 01 Dec 2009 18:39:20 +0100
+
+screenruler (0.85-2) unstable; urgency=low
+
+  * debian/patches/fix-color-parsing.patch:
+     - The colour selection is not correctly saved, and if you change th
+       colour screenruler may afterwards fails to start. The problem was
+       that the string was being parsed as 8-bit, but it's 16-bit (LP: #273684).
+  * debian/control:
+     - Change the Maintainer field so that it doesn't contain my nick anymore.
+
+ -- Siegfried-Angel Gevatter Pujals <rainct@ubuntu.com>  Fri, 19 Dec 2008 17:28:20 +0100
+
+screenruler (0.85-1) unstable; urgency=low
+
+  * Initial release (Closes: #466691).
+  * debian/patches/change-icon-path.patch:
+     - Patch screenruler.glade so that it looks in /usr/share/pixmaps for
+       the application's icon.
+  * debian/patches/hardcode-data-path.patch:
+     - Hardcode the path to /usr/share/screenruler so that the executable
+       finds it.
+
+ -- Siegfried-Angel Gevatter Pujals (RainCT) <rainct@ubuntu.com>  Tue, 04 Mar 2008 16:08:02 +0100

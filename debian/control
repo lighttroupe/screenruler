@@ -1,0 +1,21 @@
+Source: screenruler
+Section: gnome
+Priority: optional
+Maintainer: Siegfried-Angel Gevatter Pujals <rainct@ubuntu.com>
+Uploaders: Georges Khaznadar <georgesk@debian.org>
+Homepage: http://gnomecoder.wordpress.com/screenruler/
+Build-Depends: debhelper (>= 11)
+Standards-Version: 4.3.0
+
+Package: screenruler
+Architecture: all
+Depends: ${misc:Depends}, ruby | ruby-interpreter, ruby-gtk2, ruby-cairo, ruby-gettext
+Description: measure objects on screen with a variety of metrics
+ ScreenRuler will display a ruler on screen which allows you to measure the
+ other objects that you've there. It has the following features:
+  * Horizontal and vertical measurement in 6 different metrics:
+    pixels, centimetres, inches, picas, points, and as a percentage
+    of the ruler's length.
+  * Cusomizable colors and fonts.
+  * Keyboard control for precise positioning.
+  * Option for the ruler to stay always on top of other windows.
