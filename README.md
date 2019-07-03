@@ -9,7 +9,7 @@ using six different metrics.
 FEATURES
 --------
 
-    * Horizontal and vertical measurement in 6 different metrics: pixels, centimeters, inches, picas, points, and as a percentage of the ruler’s length.
-    * Color and font are customizable.
-    * Keyboard control for precise positioning.
-    * Ruler can be set to stay always on top of other windows.
+* Horizontal and vertical measurement in 6 different metrics: pixels, centimeters, inches, picas, points, and as a percentage of the ruler’s length.
+* Color and font are customizable.
+* Keyboard control for precise positioning.
+* Ruler can be set to stay always on top of other windows.
