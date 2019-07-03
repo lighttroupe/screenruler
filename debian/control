@@ -6,6 +6,8 @@ Uploaders: Georges Khaznadar <georgesk@debian.org>
 Homepage: http://gnomecoder.wordpress.com/screenruler/
 Build-Depends: debhelper (>= 11)
 Standards-Version: 4.3.0
+Vcs-Browser: https://salsa.debian.org/georgesk/screenruler
+Vcs-Git: https://salsa.debian.org/georgesk/screenruler.git
 
 Package: screenruler
 Architecture: all
