@@ -3,6 +3,7 @@ screenruler (0.960+bzr41+deb10-1) unstable; urgency=medium
   * added myself as uploader
   * recompiled for debian10
   * upgraded dh level to 11, Standards-Version to 4.3.0
+  * Closes: #931362
 
  -- Georges Khaznadar <georgesk@debian.org>  Wed, 03 Jul 2019 08:38:10 +0200
 
