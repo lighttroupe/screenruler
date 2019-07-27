@@ -1,0 +1,5 @@
+# quilt stuff
+.pc/
+
+# emacs stuff
+*~
