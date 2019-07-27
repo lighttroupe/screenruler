@@ -11,7 +11,12 @@ Vcs-Git: https://salsa.debian.org/georgesk/screenruler.git
 
 Package: screenruler
 Architecture: all
-Depends: ${misc:Depends}, ruby | ruby-interpreter, ruby-gtk2, ruby-cairo, ruby-gettext
+Depends: ${misc:Depends},
+ ruby | ruby-interpreter,
+ ruby-gtk2,
+ ruby-cairo,
+ ruby-cairo-gobject,
+ ruby-gettext
 Description: measure objects on screen with a variety of metrics
  ScreenRuler will display a ruler on screen which allows you to measure the
  other objects that you've there. It has the following features:

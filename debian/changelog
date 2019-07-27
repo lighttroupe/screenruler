@@ -1,3 +1,12 @@
+screenruler (0.960+bzr41+deb10-2) unstable; urgency=medium
+
+  * fixed a name collision, thanks to Christian Schiffler
+    <c.schiffler@cyberspectrum.de>. Closes: #899067
+  * added a dependency on ruby-cairo-gobject.
+    Closes: #868893; Closes: #767435; Closes: #670554
+
+ -- Georges Khaznadar <georgesk@debian.org>  Sat, 27 Jul 2019 19:18:31 +0200
+
 screenruler (0.960+bzr41+deb10-1) unstable; urgency=medium
 
   * added myself as uploader
