@@ -1,3 +1,9 @@
+screenruler (0.960+bzr41+deb10-3) unstable; urgency=medium
+
+  * make a source-only upload
+
+ -- Georges Khaznadar <georgesk@debian.org>  Sun, 25 Aug 2019 16:27:07 +0200
+
 screenruler (0.960+bzr41+deb10-2) unstable; urgency=medium
 
   * fixed a name collision, thanks to Christian Schiffler
