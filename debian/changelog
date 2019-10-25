@@ -1,3 +1,9 @@
+screenruler (0.960+bzr41+deb10-4) unstable; urgency=medium
+
+  * nominated myself as the maintainer. Closes: #942619
+
+ -- Georges Khaznadar <georgesk@debian.org>  Fri, 25 Oct 2019 23:12:42 +0200
+
 screenruler (0.960+bzr41+deb10-3) unstable; urgency=medium
 
   * make a source-only upload

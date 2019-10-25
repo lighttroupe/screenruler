@@ -1,8 +1,8 @@
 Source: screenruler
 Section: gnome
 Priority: optional
-Maintainer: Siegfried-Angel Gevatter Pujals <rainct@ubuntu.com>
-Uploaders: Georges Khaznadar <georgesk@debian.org>
+Maintainer: Georges Khaznadar <georgesk@debian.org>
+Uploaders: Siegfried-Angel Gevatter Pujals <rainct@ubuntu.com>
 Homepage: http://gnomecoder.wordpress.com/screenruler/
 Build-Depends: debhelper (>= 11)
 Standards-Version: 4.3.0
