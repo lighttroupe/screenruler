@@ -1,3 +1,9 @@
+screenruler (0.960+bzr41+deb10-5) unstable; urgency=medium
+
+  * added a dependency on ibcanberra-gtk3-module. Closes: #1000230
+
+ -- Georges Khaznadar <georgesk@debian.org>  Fri, 26 Nov 2021 19:41:58 +0100
+
 screenruler (0.960+bzr41+deb10-4) unstable; urgency=medium
 
   * nominated myself as the maintainer. Closes: #942619
