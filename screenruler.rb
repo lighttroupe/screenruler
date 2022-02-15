@@ -1,5 +1,3 @@
-# coding: utf-8
-
 #!/usr/bin/env ruby
 # -*- encoding: utf-8; -*-
 
@@ -21,9 +19,7 @@
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
 
-# this file should be run from a directory which contains
-# other files necessary for screenruler, and a subdirectory './utils'
-
+Dir.chdir(File.dirname(File.expand_path(File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__)))		# So that this file can be run from anywhere
 $LOAD_PATH << './utils'
 
 require 'gettext'		# Internationalization Support
