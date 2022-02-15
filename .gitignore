@@ -6,3 +6,4 @@
 
 # gettext stuff
 *.mo
+*.pot
