@@ -59,7 +59,7 @@ module Kernel
 		list.each { |file| orig_require(file) }
 	end
 
-	def loop(from, to, step=1)
+	def sr_loop(from, to, step=1)
 		i = from
 		while i <= to
 			yield i

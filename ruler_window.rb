@@ -16,7 +16,8 @@
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
 
-require 'glade_window', 'ruler_popup_menu', 'canvas', 'unique_timeout'
+require 'glade_window', 'canvas', 'unique_timeout'
+require_relative 'ruler_popup_menu'
 
 Unit = Struct.new('Unit', :name, :tick_pattern, :units_per_pattern_repetition, :per_inch)
 
@@ -243,7 +244,7 @@ private
 
 		# Loop, drawing ticks (top and bottom) and labels
 		repetitions, tick_index = 0, 0
-		loop(pixels_per_tick, length + OVERDRAW, pixels_per_tick) { |x|
+		sr_loop(pixels_per_tick, length + OVERDRAW, pixels_per_tick) { |x|
 			x = x.floor + 0.5		# Cairo likes lines in the 'center' of pixels
 
 			tick_size = @@tick_sizes[ unit.tick_pattern[tick_index, 1].to_s ]
@@ -332,7 +333,7 @@ private
 
 		# Fill with 'horizontal' lines
 		cr.set_source_color($preferences_window.foreground_color)
-		loop(@menu_box.y + 2.5, @menu_box.y + @menu_box.height + -1.5, 2) { |y|
+		sr_loop(@menu_box.y + 2.5, @menu_box.y + @menu_box.height + -1.5, 2) { |y|
 			cr.move_to(@menu_box.x + 2.0, y)
 			cr.line_to(@menu_box.x + @menu_box.width - 1, y)
 		}

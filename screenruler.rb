@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-#coding: utf-8
+# -*- encoding: utf-8; -*-
 
  ###############################################################################
  #  Copyright 2011 Ian McIntosh <ian@openanswers.org>
@@ -19,7 +19,7 @@
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
 
-Dir.chdir(File.dirname(File.expand_path(File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__)))		# So that this file can be run from anywhere
+Dir.chdir('/usr/share/screenruler')
 $LOAD_PATH << './utils'
 
 require 'gettext'		# Internationalization Support
@@ -48,7 +48,10 @@ SETTINGS_FILE_NAME = 'settings.yml'
 puts _('Loading libraries...')
 
 require 'addons_ruby'									# for multi-file 'require'
-require 'gtk2', 'settings', 'addons_gtk', 'ruler_window', 'preferences_window', 'help_window'
+require 'gtk2', 'settings', 'addons_gtk'
+require_relative 'ruler_window'
+require_relative 'preferences_window'
+require_relative 'help_window'
 
 ###################################################################
 # Main
