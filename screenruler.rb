@@ -1,3 +1,5 @@
+# coding: utf-8
+
 #!/usr/bin/env ruby
 # -*- encoding: utf-8; -*-
 
@@ -19,18 +21,8 @@
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
 
-THIS_DIR = File.dirname(File.expand_path(__FILE__))
-
-if File.exist?(File.join(THIS_DIR, "utils", "canvas.rb"))
-  # then the utilities needed to run this application are here
-  Dir.chdir(THIS_DIR)
-else
-  # the application is probably packaged, so the utilities are
-  # in the directory /usr/share/screenruler
-  Dir.chdir('/usr/share/screenruler')
-end
-
-# puts("Current dir: " + Dir.getwd())
+# this file should be run from a directory which contains
+# other files necessary for screenruler, and a subdirectory './utils'
 
 $LOAD_PATH << './utils'
 
