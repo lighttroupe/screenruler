@@ -30,7 +30,7 @@ else
   Dir.chdir('/usr/share/screenruler')
 end
 
-puts("Current dir: " + Dir.getwd())
+# puts("Current dir: " + Dir.getwd())
 
 $LOAD_PATH << './utils'
 
