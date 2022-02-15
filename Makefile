@@ -17,7 +17,7 @@ install:
 	  cp -a $$f $(DESTDIR)/usr/share/screenruler; \
 	done
 	mkdir -p $(DESTDIR)/usr/bin
-	cp screenruler.rb $(DESTDIR)/usr/bin/screenruler
+	install -m 775 screenruler.sh $(DESTDIR)/usr/bin/screenruler
 	mkdir -p $(DESTDIR)/usr/share/pixmaps
 	cp screenruler-icon-64x64.png $(DESTDIR)/usr/share/pixmaps/screenruler.png
 	mkdir -p $(DESTDIR)/usr/share/applications
