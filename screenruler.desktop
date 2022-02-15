@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Screen Ruler
+Name[ca]=Regle a la pantalla
+Name[de]=Bildschirmlineal
+Name[es]=Regla en la pantalla
+Comment=Measure objects on your screen
+Comment[ca]=Mesureu la mida d'objectes a la vostra pantalla
+Comment[de]=Messen Sie Objekte auf dem Bildschirm
+Comment[es]=Mide objetos en la pantalla
+Exec=screenruler
+Icon=screenruler
+Categories=GTK;Utility;

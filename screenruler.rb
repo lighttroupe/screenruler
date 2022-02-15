@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-#coding: utf-8
+# -*- encoding: utf-8; -*-
 
  ###############################################################################
  #  Copyright 2011 Ian McIntosh <ian@openanswers.org>
@@ -19,7 +19,19 @@
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
 
-Dir.chdir(File.dirname(File.expand_path(File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__)))		# So that this file can be run from anywhere
+THIS_DIR = File.dirname(File.expand_path(__FILE__))
+
+if File.exist?(File.join(THIS_DIR, "utils", "canvas.rb"))
+  # then the utilities needed to run this application are here
+  Dir.chdir(THIS_DIR)
+else
+  # the application is probably packaged, so the utilities are
+  # in the directory /usr/share/screenruler
+  Dir.chdir('/usr/share/screenruler')
+end
+
+# puts("Current dir: " + Dir.getwd())
+
 $LOAD_PATH << './utils'
 
 require 'gettext'		# Internationalization Support
@@ -48,14 +60,17 @@ SETTINGS_FILE_NAME = 'settings.yml'
 puts _('Loading libraries...')
 
 require 'addons_ruby'									# for multi-file 'require'
-require 'gtk2', 'settings', 'addons_gtk', 'ruler_window', 'preferences_window', 'help_window'
+require 'gtk2', 'settings', 'addons_gtk'
+require_relative 'ruler_window'
+require_relative 'preferences_window'
+require_relative 'help_window'
 
 ###################################################################
 # Main
 ###################################################################
 Gtk.init
 
-APP_ICON_LIST = ['screenruler-icon-16x16.png', 'screenruler-icon-32x32.png', 'screenruler-icon-64x64.png'].collect { |filename| Gdk::Pixbuf.new(filename) }
+APP_ICON_LIST = ['screenruler-icon-16x16.png', 'screenruler-icon-32x32.png', 'screenruler-icon-64x64.png'].collect { |filename| GdkPixbuf::Pixbuf.new(:file => filename) }
 
 #
 # Load Settings
