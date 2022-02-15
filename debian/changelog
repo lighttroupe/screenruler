@@ -1,3 +1,19 @@
+screenruler (1.0-1) unstable; urgency=medium
+
+  * New upstream changes:
+    + applied debian patches developed so far, as the future maintained
+      upstream should be the tree available on salsa.debian.org
+    + chdir to the development directory if we are developing,
+      else to /usr/share/screeruler
+    + fixed the deprecated Gtk:Pixbuf clause
+    + fix the warning
+      "Gtk-WARNING **: Unknown property: GtkWindow.has-resize-grip"
+    + added Makefiles
+    + authored a French translation
+    + new directory for .mo files
+
+ -- Georges Khaznadar <georgesk@debian.org>  Tue, 15 Feb 2022 17:32:29 +0100
+
 screenruler (0.960+bzr41+deb10-6) unstable; urgency=medium
 
   * Fixed the dependency: ibcanberra-gtk3-module => libcanberra-gtk3-module
