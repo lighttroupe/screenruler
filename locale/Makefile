@@ -6,13 +6,13 @@ MOFILES =   $(patsubst %.po, screenruler/%.mo, $(POFILES))
 
 SOURCES = $(shell ls ../*.rb)
 
-all: $(MOFILES)
+all: $(POTFILE) $(MOFILES)
 
 clean:
 	rm -f *~
 
 distclean: clean
-	rm -f $(MOFILES)
+	rm -f $(POTFILE) $(MOFILES)
 
 install:
 	mkdir -p $(DESTDIR)/usr/share/screenruler/locale
@@ -26,6 +26,10 @@ screenruler/%.mo: %.po
 	touch $@
 
 $(POTFILE): $(SOURCES) Makefile
-	xgettext -o $(POTFILE) -L Ruby --join-existing $(SOURCES)
+	if [ -f $(POTFILE) ]; then \
+	  xgettext -o $(POTFILE) -L Ruby --join-existing $(SOURCES); \
+	else \
+	  xgettext -o $(POTFILE) -L Ruby $(SOURCES); \
+	fi
 
 .PHONY: all clean distclean install
