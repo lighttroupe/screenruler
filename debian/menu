@@ -1,0 +1,6 @@
+?package(screenruler): \
+	needs="X11" \
+	section="Applications/Viewers" \
+	title="ScreenRuler" \
+	command="/usr/bin/screenruler" \
+	icon="/usr/share/pixmaps/screenruler.xpm"

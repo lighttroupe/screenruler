@@ -1,0 +1,25 @@
+Format-Specification: http://wiki.debian.org/Proposals/CopyrightFormat?action=recall&rev=440
+Upstream-Name: ScreenRuler
+Upstream-Maintainer: Ian McIntosh <ian@openanswers.org>
+Upstream-Source: https://code.launchpad.net/~ian-mcintosh/screenruler/trunk
+
+Files: *
+Copyright: © 2008-2011 Ian McIntosh <ian@openanswers.org>
+License: GPL-2
+
+Files: debian/*
+Copyright: © 2008-2011, Siegfried-A. Gevatter <rainct@ubuntu.com>
+License: GPL-2
+
+License: GPL-2
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ Please see `/usr/share/common-licenses/GPL-2'.

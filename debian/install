@@ -1,0 +1,7 @@
+*.rb usr/share/screenruler
+*.glade usr/share/screenruler
+*.png usr/share/screenruler
+utils usr/share/screenruler
+
+debian/screenruler.xpm usr/share/pixmaps
+debian/screenruler.desktop usr/share/applications
