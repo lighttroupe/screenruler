@@ -70,7 +70,7 @@ require_relative 'help_window'
 ###################################################################
 Gtk.init
 
-APP_ICON_LIST = ['screenruler-icon-16x16.png', 'screenruler-icon-32x32.png', 'screenruler-icon-64x64.png'].collect { |filename| Gdk::Pixbuf.new(filename) }
+APP_ICON_LIST = ['screenruler-icon-16x16.png', 'screenruler-icon-32x32.png', 'screenruler-icon-64x64.png'].collect { |filename| GdkPixbuf::Pixbuf.new(:file => filename) }
 
 #
 # Load Settings
