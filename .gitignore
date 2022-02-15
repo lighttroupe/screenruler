@@ -3,3 +3,6 @@
 
 # emacs stuff
 *~
+
+# gettext stuff
+*.mo
