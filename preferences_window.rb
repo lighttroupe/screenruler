@@ -1,5 +1,6 @@
  ###############################################################################
  #  Copyright 2011 Ian McIntosh <ian@openanswers.org>
+ #  Copyright 2022 Georges Khaznadar <georgesk@debian.org> (migration to gtk3)
  #
  #  This program is free software; you can redistribute it and/or modify
  #  it under the terms of the GNU General Public License as published by
@@ -15,6 +16,11 @@
  #  along with this program; if not, write to the Free Software
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
+
+if __FILE__ == $0
+  require 'gtk3'
+  $LOAD_PATH << './utils'
+end
 
 require 'glade_window'
 
@@ -33,7 +39,11 @@ class PreferencesWindow < GladeWindow
 
 		@system_ppi_setting_label.markup = sprintf("(%d x %d)", system_ppi_horizontal, system_ppi_vertical)
 
-		on_key_press(Gdk::Keyval::GDK_Escape) { hide }
+    @window.signal_connect('key_press_event') { |w,e|
+      if e.keyval == Gdk::Keyval::KEY_Escape
+        hide
+      end
+    }
 	end
 
 	def foreground_color ; return @foreground_color_button.color ; end
@@ -115,6 +125,12 @@ private
 	def on_close_clicked
 		hide
 	end
+end
+
+if __FILE__ == $0
+  window = PreferencesWindow.new
+  window.show
+  Gtk.main
 end
 
 # Local Variables:
