@@ -16,7 +16,9 @@
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
 
-require 'glade_window', 'canvas', 'unique_timeout'
+require 'glade_window'
+require 'canvas'
+require 'unique_timeout'
 require_relative 'ruler_popup_menu'
 
 Unit = Struct.new('Unit', :name, :tick_pattern, :units_per_pattern_repetition, :per_inch)
@@ -37,12 +39,12 @@ class RulerWindow < GladeWindow
 	MEASUREMENT_TOOLTIP_UPDATE_FREQUENCY = 80					# in milliseconds
 
 	@@unit_settings = {
-		UNIT_INCHES				=> Unit.new(_('in'), 'MMMLMMML',			1,	1),
-		UNIT_CENTIMETERS	=> Unit.new(_('cm'), 'MMMMLMMMML', 	1,	0.3937),
-		UNIT_PICAS				=> Unit.new(_('pc'), 'MMLMML', 			6,	0.1667),
-		UNIT_POINTS				=> Unit.new(_('pt'), 'MMMMMLMMMMML',	72,	0.0139),
-		UNIT_PIXELS				=> Unit.new(_('px'), 'SSSSMSSSSMSSSSMSSSSMSSSSL' * 2, 100, -1),	# :per_inch not used...
-		UNIT_PERCENTAGE		=> Unit.new(_('%'),  'ML',						10,	-1)											# ...ditto
+		UNIT_INCHES				=> Unit.new('in', 'MMMLMMML',			1,	1),
+		UNIT_CENTIMETERS	=> Unit.new('cm', 'MMMMLMMMML', 	1,	0.3937),
+		UNIT_PICAS				=> Unit.new('pc', 'MMLMML', 			6,	0.1667),
+		UNIT_POINTS				=> Unit.new('pt', 'MMMMMLMMMMML',	72,	0.0139),
+		UNIT_PIXELS				=> Unit.new('px', 'SSSSMSSSSMSSSSMSSSSMSSSSL' * 2, 100, -1),	# :per_inch not used...
+		UNIT_PERCENTAGE		=> Unit.new('%',  'ML',						10,	-1)											# ...ditto
 	}.freeze
 
 	@@tick_sizes = {'S' => 4, 'M' => 7, 'L' => 10}.freeze		# length of tick marks (in pixels) in above patterns
