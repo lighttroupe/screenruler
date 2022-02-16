@@ -86,8 +86,8 @@ class PreferencesWindow < GladeWindow
 	end
 
 	def write_settings(settings)
-		settings['foreground_color'] = self.foreground_color.to_hex
-		settings['background_color'] = self.background_color.to_hex
+		settings['foreground_color'] = self.foreground_color.to_s
+		settings['background_color'] = self.background_color.to_s
 		settings['font'] = self.font
 		settings['opacity'] = @opacity
 		settings['use_custom_pixels_per_inch'] = @use_custom_ppi_radiobutton.active?
