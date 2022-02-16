@@ -67,7 +67,7 @@ class RulerWindow < GladeWindow
 
 		# Fill our window with a DrawingArea to render the ruler
 		@canvas = Canvas.new
-    @cansvas.set_draw_proc { |cr| draw(cr) }
+    #@cansvas.set_draw_proc { |cr| draw(cr) } ## obsoleted?
 		@window << @canvas.widget
 
 		@mouse_is_in_window = false							# we'll get a notify right away if mouse begins in the window
@@ -77,8 +77,8 @@ class RulerWindow < GladeWindow
 		configure_orientation
 
 		# GTK signal handlers (others hooked up by Glade)
-		@canvas.widget.add_events(Gdk::Event::ENTER_NOTIFY_MASK).signal_connect('enter_notify_event') { self.mouse_is_in_window = true }
-		@canvas.widget.add_events(Gdk::Event::LEAVE_NOTIFY_MASK).signal_connect('leave_notify_event') { self.mouse_is_in_window = false }
+		@canvas.widget.add_events(Gdk::EventMask::ENTER_NOTIFY_MASK).signal_connect('enter_notify_event') { self.mouse_is_in_window = true }
+		@canvas.widget.add_events(Gdk::EventMask::LEAVE_NOTIFY_MASK).signal_connect('leave_notify_event') { self.mouse_is_in_window = false }
 
 		@measurement_tooltip_timeout = UniqueTimeout.new(MEASUREMENT_TOOLTIP_UPDATE_FREQUENCY) { update_measurement_tooltip }
 	end
@@ -100,7 +100,7 @@ class RulerWindow < GladeWindow
 
 	def update_measurement_tooltip
 		# Force a redraw if mouse has moved
-		__window__unused__, mouse_x, mouse_y, key_mask = Gdk::Window.default_root_window.pointer
+		__window__unused__, mouse_x, mouse_y, key_mask = self.root_window.pointer
 		if mouse_x != @previous_mouse_x or mouse_y != @previous_mouse_y or key_mask != @previous_key_mask
 			# save for later comparison
 			@previous_mouse_x, @previous_mouse_y, @previous_key_mask = mouse_x, mouse_y, key_mask
@@ -192,11 +192,11 @@ private
 		case @orientation
 			when ORIENTATION_LEFT
 				@menu_box = Gdk::Rectangle.new(MENU_BOX_RELIEF, (@breadth / 2) - (MENU_BOX_HEIGHT / 2), MENU_BOX_WIDTH, MENU_BOX_HEIGHT)
-				@near_edge, @far_edge = Gdk::Window::EDGE_WEST, Gdk::Window::EDGE_EAST
+				@near_edge, @far_edge = 3,4 # Gdk::Window::EDGE_WEST, Gdk::Window::EDGE_EAST
 
 			when ORIENTATION_UP
 				@menu_box = Gdk::Rectangle.new(MENU_BOX_RELIEF, (@breadth / 2) - (MENU_BOX_HEIGHT / 2), MENU_BOX_WIDTH, MENU_BOX_HEIGHT)
-				@near_edge, @far_edge = Gdk::Window::EDGE_NORTH, Gdk::Window::EDGE_SOUTH
+				@near_edge, @far_edge = 1, 6 # Gdk::Window::EDGE_NORTH, Gdk::Window::EDGE_SOUTH
 		end
 		@window.set_size_request(@breadth, @breadth)
 	end
@@ -366,7 +366,7 @@ private
 	###################################################################
 	def on_button_press_event(obj, event)
 		case event.event_type
-		when Gdk::Event::BUTTON_PRESS		# single-clicks
+		when Gdk::EventType::BUTTON_PRESS		# single-clicks
 			case event.button
 				when MOUSE_BUTTON_1		# popup, resize, or drag
 					if menu_hit(event.x, event.y)
@@ -453,8 +453,13 @@ private
 		end
 	end
 
-	def menu_hit(x, y)
-		@menu_box.grow(2).contains(x,y)		# grow a little to be easier to click on
+	def menu_hit(xc, yc, tolerance = 2)
+    # check x,y with a precision +- 2px to make it easier to click on menu
+    return false if xc < @menu_box.x - tolerance
+    return false if yc < @menu_box.y - tolerance
+    return false if xc > @menu_box.x + @menu_box.width + tolerance
+	  return false if yc > @menu_box.y + @menu_box.height + tolerance
+    return true
 	end
 
 	###################################################################

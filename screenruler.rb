@@ -35,7 +35,7 @@ UNIT_LAST = UNIT_PERCENTAGE
 APP_NAME					= _('Screen Ruler')
 APP_COPYRIGHT			= "Copyright (c) 2011 Ian McIntosh"
 APP_AUTHORS 			= ['Ian McIntosh <ian@openanswers.org>',
-                     'Georges Khaznadar <georgesk@debian.org']
+                     'Georges Khaznadar <georgesk@debian.org>']
 APP_ARTISTS				= ['János Horváth <horvathhans@gmail.com>']
 APP_VERSION				= '1.0'
 APP_LOGO_FILENAME = 'screenruler-logo.png'
@@ -51,17 +51,14 @@ puts _('Loading libraries...')
 require 'addons_ruby'									# for multi-file 'require'
 require 'gtk3'
 require 'settings'
-require 'addons_gtk'
 
 require_relative 'ruler_window'
-=begin
 require_relative 'preferences_window'
 require_relative 'help_window'
 
 ###################################################################
 # Main
 ###################################################################
-Gtk.init
 
 APP_ICON_LIST = ['screenruler-icon-16x16.png', 'screenruler-icon-32x32.png', 'screenruler-icon-64x64.png'].collect { |filename| GdkPixbuf::Pixbuf.new(:file => filename) }
 
@@ -98,8 +95,6 @@ ensure
 	[$ruler_window, $ruler_popup_menu, $preferences_window].each { |win| win.write_settings(settings) }
 	settings.save(settings_file_path)
 end
-
-=end
 
 # Local Variables:
 # tab-width: 2
