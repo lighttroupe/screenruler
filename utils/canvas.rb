@@ -24,7 +24,8 @@ class Canvas < DelegateClass(Gdk::Pixmap)	# so we can use Pixmap methods on our 
 	attr_reader :widget, :height, :width
 
 	def initialize
-		@widget = Gtk::DrawingArea.new.show			# widget to draw on to
+		@widget = Gtk::DrawingArea.new
+    @widget.show			# widget to draw on to
 		@widget.double_buffered = false
 		@redraw_needed = true
 
@@ -35,7 +36,7 @@ class Canvas < DelegateClass(Gdk::Pixmap)	# so we can use Pixmap methods on our 
 			__setobj__(@buffer)	# set a new object to delegate to
 			redraw
 		}
-		@widget.signal_connect('expose-event') { |obj, event|				# Widget changed visibility
+		@widget.signal_connect('draw') { |obj, event|				# Widget changed visibility
 			@gc ||= @widget.style.fg_gc(Gtk::STATE_NORMAL)
 			@draw_proc.call(@buffer.create_cairo_context) if @redraw_needed
 			@redraw_needed = false

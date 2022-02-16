@@ -53,11 +53,6 @@ class Object
 end
 
 module Kernel
-	# a new 'require' supporting multiple files
-	alias_method :orig_require, :require
-	def require(*list)
-		list.each { |file| orig_require(file) }
-	end
 
 	def sr_loop(from, to, step=1)
 		i = from

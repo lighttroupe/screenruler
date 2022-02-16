@@ -16,10 +16,21 @@
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
 
+if __FILE__ == $0
+  require 'gtk3'
+  $LOAD_PATH << './utils'
+  UNIT_PIXELS, UNIT_CENTIMETERS, UNIT_INCHES, UNIT_PICAS, UNIT_POINTS, UNIT_PERCENTAGE = (0..5).to_a
+  APP_ICON_LIST = ['screenruler-icon-16x16.png', 'screenruler-icon-32x32.png',
+                   'screenruler-icon-64x64.png'].collect {
+    |filename| GdkPixbuf::Pixbuf.new(:file => filename)
+  }
+end
+
 require 'glade_window'
 require 'canvas'
 require 'unique_timeout'
 require_relative 'ruler_popup_menu'
+
 
 Unit = Struct.new('Unit', :name, :tick_pattern, :units_per_pattern_repetition, :per_inch)
 
@@ -55,7 +66,8 @@ class RulerWindow < GladeWindow
 		self.icon_list = APP_ICON_LIST
 
 		# Fill our window with a DrawingArea to render the ruler
-		@canvas = Canvas.new.set_draw_proc { |cr| draw(cr) }
+		@canvas = Canvas.new
+    @cansvas.set_draw_proc { |cr| draw(cr) }
 		@window << @canvas.widget
 
 		@mouse_is_in_window = false							# we'll get a notify right away if mouse begins in the window
@@ -214,7 +226,9 @@ private
 	###################################################################
 	def draw(cr)
 		prepare_rotated_canvas(cr)
-		pangolayout = cr.create_pango_layout.set_font_from_string($preferences_window.font)
+		pangolayout = cr.create_pango_layout
+    pangolayout.set_font_description(
+      Pango::FontDescription.new($preferences_window.font))
 
 		# Background
 		cr.set_source_color($preferences_window.background_color)
@@ -264,7 +278,10 @@ private
 			if tick_index == unit.tick_pattern.size - 1
 				repetitions += 1
 				pangolayout.text = sprintf("%d %s", repetitions * units_per_pattern_repetition, (repetitions == 1) ? unit.name : '')
-				cr.show_pango_layout_centered(pangolayout, x, @breadth / 2)		# (see addons_gtk.rb)
+				#cr.show_pango_layout_centered(pangolayout, x, @breadth / 2)
+        w,h = cr.pixel_size
+        move_to(x - (w / 2), @breadth / 2 - (h / 2))
+        show_pango_layout(cr)
 			end
 
 			tick_index = (tick_index + 1) % unit.tick_pattern.size	# tick_index repeats eg. 0->7 if there are 8 in the pattern
@@ -282,7 +299,9 @@ private
 	def draw_mouse_tracker(cr)
 		__window__unused__, mouse_x, mouse_y, key_mask = Gdk::Window.default_root_window.pointer
 
-		tooltip_pango_layout = cr.create_pango_layout.set_font_from_string($preferences_window.font)
+		tooltip_pango_layout = cr.create_pango_layout
+    tooltip_pango_layout.set_font_description(
+      Pango::FontDescription.new($preferences_window.font))
 
 		window_x, window_y = position
 
