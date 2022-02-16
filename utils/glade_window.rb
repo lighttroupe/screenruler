@@ -1,5 +1,6 @@
  ###############################################################################
  #  Copyright 2011 Ian McIntosh <ian@openanswers.org>
+ #  Copyright 2022 Georges Khaznadar <georgesk@debian.org> (migration to gtk3)
  #
  #  This program is free software; you can redistribute it and/or modify
  #  it under the terms of the GNU General Public License as published by
@@ -26,7 +27,8 @@ class GladeWindow < DelegateClass(Gtk::Window)
 		file_name = sprintf("%s.glade", root_widget_name)
 		instance_variable_names = options[:widgets] || []
 
-		@builder = Gtk::Builder.new.add_from_file(file_name)
+		@builder = Gtk::Builder.new
+    @builder.add_from_file(file_name)
 
 		# create instance variables out of created widgets
 		instance_variable_names.each { |name|
