@@ -27,7 +27,6 @@ if __FILE__ == $0
 end
 
 require 'glade_window'
-require 'canvas'
 require 'unique_timeout'
 require_relative 'ruler_popup_menu'
 
@@ -65,20 +64,29 @@ class RulerWindow < GladeWindow
 
 		self.icon_list = APP_ICON_LIST
 
-		# Fill our window with a DrawingArea to render the ruler
-		@canvas = Canvas.new
-    #@cansvas.set_draw_proc { |cr| draw(cr) } ## obsoleted?
-		@window << @canvas.widget
+		# Fill our window with a Drawing Area to render the ruler
+    w, h = self.size
+		@surface = Cairo::ImageSurface.new(Cairo::Format::RGB24, w, h)
+    @cr = Cairo::Context.new(@surface)
 
-		@mouse_is_in_window = false							# we'll get a notify right away if mouse begins in the window
+		@mouse_is_in_window = false	# we'll get a notify right away if mouse begins in the window
 		@orientation = ORIENTATION_LEFT
+    self.signal_connect('configure-event') { |obj, event|	# Widget changed size
+			#@width, @height = event.width, event.height
+      puts("===debug in event configure-event====")
+		}
+		self.signal_connect('draw') { |obj, event| # Widget changed visibility
+      puts("===debug in event draw====", window)
+			#@redraw_needed = false
+		}
+
 
 		configure_ppi
 		configure_orientation
 
 		# GTK signal handlers (others hooked up by Glade)
-		@canvas.widget.add_events(Gdk::EventMask::ENTER_NOTIFY_MASK).signal_connect('enter_notify_event') { self.mouse_is_in_window = true }
-		@canvas.widget.add_events(Gdk::EventMask::LEAVE_NOTIFY_MASK).signal_connect('leave_notify_event') { self.mouse_is_in_window = false }
+		self.add_events(Gdk::EventMask::ENTER_NOTIFY_MASK).signal_connect('enter_notify_event') { self.mouse_is_in_window = true }
+		self.add_events(Gdk::EventMask::LEAVE_NOTIFY_MASK).signal_connect('leave_notify_event') { self.mouse_is_in_window = false }
 
 		@measurement_tooltip_timeout = UniqueTimeout.new(MEASUREMENT_TOOLTIP_UPDATE_FREQUENCY) { update_measurement_tooltip }
 	end
@@ -127,9 +135,10 @@ class RulerWindow < GladeWindow
 	end
 
 	def length
+    w, h = self.size
 		case @orientation
-			when ORIENTATION_LEFT	then @canvas.width
-			when ORIENTATION_UP		then @canvas.height
+			when ORIENTATION_LEFT	then w
+			when ORIENTATION_UP		then h
 		end
 	end
 
@@ -142,10 +151,6 @@ class RulerWindow < GladeWindow
 			when ORIENTATION_LEFT	then $preferences_window.ppi_horizontal
 			when ORIENTATION_UP		then $preferences_window.ppi_vertical
 		end
-	end
-
-	def redraw
-		@canvas.redraw
 	end
 
 	def rotate(root_x, root_y, window_x, window_y)
@@ -203,13 +208,14 @@ private
 
 	def mouse_is_in_window=(value)
 		@mouse_is_in_window = value
-		redraw
+		show_all
 	end
 
 	def grow(amount)	# can be negative
+    w, h = self.size
 		case @orientation
-			when ORIENTATION_LEFT then resize(@canvas.width + amount, @canvas.height)
-			when ORIENTATION_UP then resize(@canvas.width, @canvas.height + amount)
+			when ORIENTATION_LEFT then resize(w + amount, h)
+			when ORIENTATION_UP then resize(w, h + amount)
 		end
 	end
 

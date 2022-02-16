@@ -105,7 +105,7 @@ private
 	# Signal Handlers
 	###################################################################
 	def on_style_changed
-		$ruler_window.redraw
+		$ruler_window.show_all
 	end
 
 	def on_ppi_vertical_spinbutton_changed

@@ -20,42 +20,28 @@ require 'pathname'
 require 'cairo'
 require 'delegate'
 
-class Canvas < DelegateClass(Cairo::Surface)
+class Canvas < Cairo::ImageSurface
 	attr_reader :widget, :height, :width
 
-	def initialize
-		@widget = Gtk::DrawingArea.new
-    @widget.show			# widget to draw on to
-		@widget.double_buffered = false
-		@redraw_needed = true
+	def initialize (window, width = 100, height = 100)
+    super(Cairo::Format::RGB24, height, width)
+    @cr = Cairo::Context.new(self)
+    @parent = window
+    @width = width
+    @height= height
 
 		# GTK Signal Handlers
-		@widget.signal_connect('configure-event') { |obj, event|		# Widget changed size
+	  window.signal_connect('configure-event') { |obj, event|		# Widget changed size
 			@width, @height = event.width, event.height		# save it
-			@buffer = @widget.window.create_similar_surface(
-        0, @width, @height)
-			__setobj__(@buffer)	# set a new object to delegate to
-			redraw
+      puts("===debug in event configure-event====", window)
 		}
     
-		@widget.signal_connect('draw') { |obj, event|				# Widget changed visibility
-			@gc ||= @widget.style_context
-			@widget.show_all
+		window.signal_connect('draw') { |obj, event|				# Widget changed visibility
+      puts("===debug in event draw====", window)
 			@redraw_needed = false
 		}
-		#super(nil)	# 'nil' is the object to delegate to.  this is set later in 'configure-event' callback.
-    super(nil)
 	end
 
-	def set_draw_proc(&proc)
-		@draw_proc = proc
-		self
-	end
-
-	def redraw
-		@redraw_needed = true
-		@widget.queue_draw_area(0,0, @width, @height)
-	end
 end
 
 # Local Variables:
