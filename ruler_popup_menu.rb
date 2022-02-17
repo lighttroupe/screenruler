@@ -99,7 +99,7 @@ private
 	end
 
 	def on_style_changed
-		$ruler_window.show_all
+		$ruler_window.queue_draw
 	end
 
 	def on_help_menuitem_activate
