@@ -4,7 +4,8 @@ Priority: optional
 Maintainer: Georges Khaznadar <georgesk@debian.org>
 Uploaders: Siegfried-Angel Gevatter Pujals <rainct@ubuntu.com>
 Homepage: http://gnomecoder.wordpress.com/screenruler/
-Build-Depends: debhelper-compat (= 13)
+Build-Depends: debhelper-compat (= 13),
+ ruby-gettext
 Standards-Version: 4.6.0
 Vcs-Browser: https://salsa.debian.org/georgesk/screenruler
 Vcs-Git: https://salsa.debian.org/georgesk/screenruler.git
