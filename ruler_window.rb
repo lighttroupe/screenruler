@@ -222,15 +222,24 @@ private
 		end
 	end
 
+  def set_preferred_font(cr)
+    # see $preferences_window.font => "Sans 12" by default
+    font_data = $preferences_window.font.split
+    font = font_data[0]
+    fsize = font_data[-1].to_i
+    cr.select_font_face(font,
+                        Cairo::FONT_SLANT_NORMAL,
+                        Cairo::FONT_WEIGHT_NORMAL)
+    cr.set_font_size(fsize)    
+  end
+  
 	###################################################################
 	# Drawing
 	###################################################################
 	def draw
     cr = @darea.window.create_cairo_context
 		prepare_rotated_canvas(cr)
-    # see $preferences_window.font => "Sans 12"
-    cr.select_font_face('Sans', Cairo::FONT_SLANT_NORMAL, Cairo::FONT_WEIGHT_NORMAL)
-    cr.set_font_size(12)
+    set_preferred_font(cr)
 		cr.set_source_color($preferences_window.background_color)
 		cr.rectangle(0, 0, length, @breadth)
 		cr.fill
@@ -303,9 +312,7 @@ private
 	def draw_mouse_tracker(cr)
 		__window__unused__, mouse_x, mouse_y, key_mask = self.root_window.pointer
     
-    # see $preferences_window.font => "Sans 12"
-    cr.select_font_face('Sans', Cairo::FONT_SLANT_NORMAL, Cairo::FONT_WEIGHT_NORMAL)
-    cr.set_font_size(12)
+    set_preferred_font(cr)
 		window_x, window_y = position
 		# Determine what measurement to show user
 		progress_pixels = distance_from_zero((mouse_x - window_x), (mouse_y - window_y))
@@ -388,7 +395,7 @@ private
 				when MOUSE_BUTTON_3		# right-click anywhere = popup menu
 					$ruler_popup_menu.popup(event.x_root, event.y_root, event.x, event.y, event.time)
 			end
-		when Gdk::Event::BUTTON2_PRESS		# double-click = preferences window
+		when Gdk::EventType::BUTTON2_PRESS		# double-click = preferences window
 			$preferences_window.present
 		end
 	end
@@ -424,31 +431,31 @@ private
 
 		if event.state.mod1_mask?		# alt key
 			case event.keyval
-				when Gdk::Keyval::GDK_Right, Gdk::Keyval::GDK_Down then grow(grow_amount)
-				when Gdk::Keyval::GDK_Left, Gdk::Keyval::GDK_Up then grow(-grow_amount)	# shrink ;)
+				when Gdk::Keyval::KEY_Right, Gdk::Keyval::KEY_Down then grow(grow_amount)
+				when Gdk::Keyval::KEY_Left, Gdk::Keyval::KEY_Up then grow(-grow_amount)	# shrink ;)
 				else return false		# not handled
 			end
 		else
 			case event.keyval
 				# quick-change unit measures
-				when Gdk::Keyval::GDK_1 then $ruler_popup_menu.unit = UNIT_PIXELS
-				when Gdk::Keyval::GDK_2 then $ruler_popup_menu.unit = UNIT_CENTIMETERS
-				when Gdk::Keyval::GDK_3 then $ruler_popup_menu.unit = UNIT_INCHES
-				when Gdk::Keyval::GDK_4 then $ruler_popup_menu.unit = UNIT_PICAS
-				when Gdk::Keyval::GDK_5 then $ruler_popup_menu.unit = UNIT_POINTS
-				when Gdk::Keyval::GDK_6 then $ruler_popup_menu.unit = UNIT_PERCENTAGE
+				when Gdk::Keyval::KEY_1 then $ruler_popup_menu.unit = UNIT_PIXELS
+				when Gdk::Keyval::KEY_2 then $ruler_popup_menu.unit = UNIT_CENTIMETERS
+				when Gdk::Keyval::KEY_3 then $ruler_popup_menu.unit = UNIT_INCHES
+				when Gdk::Keyval::KEY_4 then $ruler_popup_menu.unit = UNIT_PICAS
+				when Gdk::Keyval::KEY_5 then $ruler_popup_menu.unit = UNIT_POINTS
+				when Gdk::Keyval::KEY_6 then $ruler_popup_menu.unit = UNIT_PERCENTAGE
 
 				# move ruler by keyboard
-				when Gdk::Keyval::GDK_Left	then offset(-move_distance, 0)
-				when Gdk::Keyval::GDK_Right	then offset( move_distance, 0)
-				when Gdk::Keyval::GDK_Up		then offset(0, -move_distance)
-				when Gdk::Keyval::GDK_Down	then offset(0,  move_distance)
+				when Gdk::Keyval::KEY_Left	then offset(-move_distance, 0)
+				when Gdk::Keyval::KEY_Right	then offset( move_distance, 0)
+				when Gdk::Keyval::KEY_Up		then offset(0, -move_distance)
+				when Gdk::Keyval::KEY_Down	then offset(0,  move_distance)
 
 				# hide ruler
-				when Gdk::Keyval::GDK_Escape then Gtk.main_quit
+				when Gdk::Keyval::KEY_Escape then Gtk.main_quit
 
 				# show menu via keyboard
-				when Gdk::Keyval::GDK_Return												# popup menu (provide "click point" in case user chooses 'rotate')
+				when Gdk::Keyval::KEY_Return												# popup menu (provide "click point" in case user chooses 'rotate')
 					offset_x, offset_y = @breadth / 2, @breadth / 2		# provides a visually appealing rotation
 					$ruler_popup_menu.popup(self.position[0] + offset_x, self.position[1] + offset_y, offset_x, offset_y, event.time)
 				else return false		# not handled
