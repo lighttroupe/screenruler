@@ -7,3 +7,6 @@
 # gettext stuff
 *.mo
 *.pot
+
+# examples directory
+gtk3-ruby-examples-master/

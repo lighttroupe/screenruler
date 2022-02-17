@@ -19,19 +19,7 @@
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
 
-THIS_DIR = File.dirname(File.expand_path(__FILE__))
-
-if File.exist?(File.join(THIS_DIR, "utils", "canvas.rb"))
-  # then the utilities needed to run this application are here
-  Dir.chdir(THIS_DIR)
-else
-  # the application is probably packaged, so the utilities are
-  # in the directory /usr/share/screenruler
-  Dir.chdir('/usr/share/screenruler')
-end
-
-# puts("Current dir: " + Dir.getwd())
-
+Dir.chdir(File.dirname(File.expand_path(File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__)))		# So that this file can be run from anywhere
 $LOAD_PATH << './utils'
 
 require 'gettext'		# Internationalization Support
@@ -45,10 +33,11 @@ UNIT_PIXELS, UNIT_CENTIMETERS, UNIT_INCHES, UNIT_PICAS, UNIT_POINTS, UNIT_PERCEN
 UNIT_LAST = UNIT_PERCENTAGE
 
 APP_NAME					= _('Screen Ruler')
-APP_COPYRIGHT			= "Copyright (c) #{Time.now.year} Ian McIntosh"
-APP_AUTHORS 			= ['Ian McIntosh <ian@openanswers.org>']
+APP_COPYRIGHT			= "Copyright (c) 2011 Ian McIntosh"
+APP_AUTHORS 			= ['Ian McIntosh <ian@openanswers.org>',
+                     'Georges Khaznadar <georgesk@debian.org>']
 APP_ARTISTS				= ['János Horváth <horvathhans@gmail.com>']
-APP_VERSION				= '0.9.6'
+APP_VERSION				= '1.0'
 APP_LOGO_FILENAME = 'screenruler-logo.png'
 
 SETTINGS_SUBDIRECTORY_NAME = 'screenruler'
@@ -60,7 +49,9 @@ SETTINGS_FILE_NAME = 'settings.yml'
 puts _('Loading libraries...')
 
 require 'addons_ruby'									# for multi-file 'require'
-require 'gtk2', 'settings', 'addons_gtk'
+require 'gtk3'
+require 'settings'
+
 require_relative 'ruler_window'
 require_relative 'preferences_window'
 require_relative 'help_window'
@@ -68,7 +59,6 @@ require_relative 'help_window'
 ###################################################################
 # Main
 ###################################################################
-Gtk.init
 
 APP_ICON_LIST = ['screenruler-icon-16x16.png', 'screenruler-icon-32x32.png', 'screenruler-icon-64x64.png'].collect { |filename| GdkPixbuf::Pixbuf.new(:file => filename) }
 

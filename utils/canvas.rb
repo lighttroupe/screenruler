@@ -20,39 +20,28 @@ require 'pathname'
 require 'cairo'
 require 'delegate'
 
-class Canvas < DelegateClass(Gdk::Pixmap)	# so we can use Pixmap methods on our Canvas object
+class Canvas < Cairo::ImageSurface
 	attr_reader :widget, :height, :width
 
-	def initialize
-		@widget = Gtk::DrawingArea.new.show			# widget to draw on to
-		@widget.double_buffered = false
-		@redraw_needed = true
+	def initialize (window, width = 100, height = 100)
+    super(Cairo::Format::RGB24, height, width)
+    @cr = Cairo::Context.new(self)
+    @parent = window
+    @width = width
+    @height= height
 
 		# GTK Signal Handlers
-		@widget.signal_connect('configure-event') { |obj, event|		# Widget changed size
+	  window.signal_connect('configure-event') { |obj, event|		# Widget changed size
 			@width, @height = event.width, event.height		# save it
-			@buffer = Gdk::Pixmap.new(@widget.window, @width, @height, @widget.window.depth)
-			__setobj__(@buffer)	# set a new object to delegate to
-			redraw
+      puts("===debug in event configure-event====", window)
 		}
-		@widget.signal_connect('expose-event') { |obj, event|				# Widget changed visibility
-			@gc ||= @widget.style.fg_gc(Gtk::STATE_NORMAL)
-			@draw_proc.call(@buffer.create_cairo_context) if @redraw_needed
+    
+		window.signal_connect('draw') { |obj, event|				# Widget changed visibility
+      puts("===debug in event draw====", window)
 			@redraw_needed = false
-			a = event.area ; @widget.window.draw_drawable(@gc, @buffer, a.x, a.y, a.x, a.y, a.width, a.height)
 		}
-		super(nil)	# 'nil' is the object to delegate to.  this is set later in 'configure-event' callback.
 	end
 
-	def set_draw_proc(&proc)
-		@draw_proc = proc
-		self
-	end
-
-	def redraw
-		@redraw_needed = true
-		@widget.queue_draw_area(0,0, @width, @height)
-	end
 end
 
 # Local Variables:

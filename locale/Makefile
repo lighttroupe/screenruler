@@ -2,8 +2,9 @@ DESTDIR =
 POTFILE =   screenruler.pot
 POFILES =   $(shell ls *.po)
 LANGUAGES = $(patsubst %.po, %, $(POFILES))
-MOFILES =   $(patsubst %.po, screenruler/%.mo, $(POFILES))
+MOFILES =   $(patsubst %.po, %/screenruler.mo, $(POFILES))
 
+#SOURCES = $(shell ls ../*.rb ../*.glade)
 SOURCES = $(shell ls ../*.rb)
 
 all: $(POTFILE) $(MOFILES)
@@ -18,7 +19,7 @@ install:
 	mkdir -p $(DESTDIR)/usr/share/screenruler/locale
 	cp -a screenruler $(DESTDIR)/usr/share/screenruler/locale
 
-screenruler/%.mo: %.po
+%/screenruler.mo: %.po
 	msgfmt $< -o $@
 
 %po: $(POTFILE)
@@ -26,10 +27,6 @@ screenruler/%.mo: %.po
 	touch $@
 
 $(POTFILE): $(SOURCES) Makefile
-	if [ -f $(POTFILE) ]; then \
-	  xgettext -o $(POTFILE) -L Ruby --join-existing $(SOURCES); \
-	else \
-	  xgettext -o $(POTFILE) -L Ruby $(SOURCES); \
-	fi
+	rxgettext -o $(POTFILE) $(SOURCES)
 
 .PHONY: all clean distclean install

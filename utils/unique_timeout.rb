@@ -27,11 +27,11 @@ class UniqueTimeout
 
 	def start
 		stop
-		@callback_id = Gtk.timeout_add(@time) { ret = @proc.call ; true }		# true = don't call again
+		@callback_id = GLib::Timeout.add(@time) { ret = @proc.call ; true }		# true = don't call again
 	end
 
 	def stop
-		Gtk.timeout_remove(@callback_id) if @callback_id
+		GLib::Source.remove(@callback_id) if @callback_id
 		@callback_id = nil
 	end
 end

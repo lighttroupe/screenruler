@@ -16,8 +16,19 @@
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
 
-require 'glade_window', 'canvas', 'unique_timeout'
+if __FILE__ == $0
+  require 'gtk3'
+  $LOAD_PATH << './utils'
+  UNIT_PIXELS, UNIT_CENTIMETERS, UNIT_INCHES, UNIT_PICAS, UNIT_POINTS, UNIT_PERCENTAGE = (0..5).to_a
+  APP_ICON_LIST = ['screenruler-icon-16x16.png', 'screenruler-icon-32x32.png',
+                   'screenruler-icon-64x64.png'].collect {
+    |filename| GdkPixbuf::Pixbuf.new(:file => filename)
+  }
+end
+
+require 'unique_timeout'
 require_relative 'ruler_popup_menu'
+
 
 Unit = Struct.new('Unit', :name, :tick_pattern, :units_per_pattern_repetition, :per_inch)
 
@@ -37,12 +48,12 @@ class RulerWindow < GladeWindow
 	MEASUREMENT_TOOLTIP_UPDATE_FREQUENCY = 80					# in milliseconds
 
 	@@unit_settings = {
-		UNIT_INCHES				=> Unit.new(_('in'), 'MMMLMMML',			1,	1),
-		UNIT_CENTIMETERS	=> Unit.new(_('cm'), 'MMMMLMMMML', 	1,	0.3937),
-		UNIT_PICAS				=> Unit.new(_('pc'), 'MMLMML', 			6,	0.1667),
-		UNIT_POINTS				=> Unit.new(_('pt'), 'MMMMMLMMMMML',	72,	0.0139),
-		UNIT_PIXELS				=> Unit.new(_('px'), 'SSSSMSSSSMSSSSMSSSSMSSSSL' * 2, 100, -1),	# :per_inch not used...
-		UNIT_PERCENTAGE		=> Unit.new(_('%'),  'ML',						10,	-1)											# ...ditto
+		UNIT_INCHES				=> Unit.new('in', 'MMMLMMML',			1,	1),
+		UNIT_CENTIMETERS	=> Unit.new('cm', 'MMMMLMMMML', 	1,	0.3937),
+		UNIT_PICAS				=> Unit.new('pc', 'MMLMML', 			6,	0.1667),
+		UNIT_POINTS				=> Unit.new('pt', 'MMMMMLMMMMML',	72,	0.0139),
+		UNIT_PIXELS				=> Unit.new('px', 'SSSSMSSSSMSSSSMSSSSMSSSSL' * 2, 100, -1),	# :per_inch not used...
+		UNIT_PERCENTAGE		=> Unit.new('%',  'ML',						10,	-1)											# ...ditto
 	}.freeze
 
 	@@tick_sizes = {'S' => 4, 'M' => 7, 'L' => 10}.freeze		# length of tick marks (in pixels) in above patterns
@@ -52,19 +63,25 @@ class RulerWindow < GladeWindow
 
 		self.icon_list = APP_ICON_LIST
 
-		# Fill our window with a DrawingArea to render the ruler
-		@canvas = Canvas.new.set_draw_proc { |cr| draw(cr) }
-		@window << @canvas.widget
-
-		@mouse_is_in_window = false							# we'll get a notify right away if mouse begins in the window
+		# Fill our window with a Drawing Area to render the ruler
+    w, h = self.size
+    @darea = Gtk::DrawingArea.new
+    add(@darea)
+    @darea.signal_connect('draw') do  
+      draw
+    end
+    
+		@mouse_is_in_window = false	# we'll get a notify right away if mouse begins in the window
 		@orientation = ORIENTATION_LEFT
-
 		configure_ppi
 		configure_orientation
 
-		# GTK signal handlers (others hooked up by Glade)
-		@canvas.widget.add_events(Gdk::Event::ENTER_NOTIFY_MASK).signal_connect('enter_notify_event') { self.mouse_is_in_window = true }
-		@canvas.widget.add_events(Gdk::Event::LEAVE_NOTIFY_MASK).signal_connect('leave_notify_event') { self.mouse_is_in_window = false }
+		# GTK signal handlers are hooked up by Glade, let them be unmasked
+    self.add_events(
+      Gdk::EventMask::POINTER_MOTION_MASK |
+      Gdk::EventMask::ENTER_NOTIFY_MASK |
+      Gdk::EventMask::LEAVE_NOTIFY_MASK
+    )
 
 		@measurement_tooltip_timeout = UniqueTimeout.new(MEASUREMENT_TOOLTIP_UPDATE_FREQUENCY) { update_measurement_tooltip }
 	end
@@ -81,16 +98,16 @@ class RulerWindow < GladeWindow
 			@measurement_tooltip_timeout.stop
 		end
 		@enable_mouse_tracking = val
-		redraw
+		@darea.queue_draw
 	end
 
 	def update_measurement_tooltip
 		# Force a redraw if mouse has moved
-		__window__unused__, mouse_x, mouse_y, key_mask = Gdk::Window.default_root_window.pointer
+		__window__unused__, mouse_x, mouse_y, key_mask = self.root_window.pointer
 		if mouse_x != @previous_mouse_x or mouse_y != @previous_mouse_y or key_mask != @previous_key_mask
 			# save for later comparison
 			@previous_mouse_x, @previous_mouse_y, @previous_key_mask = mouse_x, mouse_y, key_mask
-			redraw
+			@darea.queue_draw
 		end
 	end
 
@@ -113,9 +130,10 @@ class RulerWindow < GladeWindow
 	end
 
 	def length
+    w, h = self.size
 		case @orientation
-			when ORIENTATION_LEFT	then @canvas.width
-			when ORIENTATION_UP		then @canvas.height
+			when ORIENTATION_LEFT	then w
+			when ORIENTATION_UP		then h
 		end
 	end
 
@@ -130,18 +148,14 @@ class RulerWindow < GladeWindow
 		end
 	end
 
-	def redraw
-		@canvas.redraw
-	end
-
 	def rotate(root_x, root_y, window_x, window_y)
 		case @orientation
 			when ORIENTATION_LEFT		# rotate to ORIENTATION_UP
-				@window.window.move_resize(root_x - (@breadth - window_y), root_y - window_x, @breadth, length)
+				self.window.move_resize(root_x - (@breadth - window_y), root_y - window_x, @breadth, length)
 				@orientation = ORIENTATION_UP
 
 			when ORIENTATION_UP
-				@window.window.move_resize(root_x - window_y, root_y - (@breadth - window_x), length, @breadth)
+				self.window.move_resize(root_x - window_y, root_y - (@breadth - window_x), length, @breadth)
 				@orientation = ORIENTATION_LEFT
 		end
 		configure_orientation
@@ -178,24 +192,25 @@ private
 		case @orientation
 			when ORIENTATION_LEFT
 				@menu_box = Gdk::Rectangle.new(MENU_BOX_RELIEF, (@breadth / 2) - (MENU_BOX_HEIGHT / 2), MENU_BOX_WIDTH, MENU_BOX_HEIGHT)
-				@near_edge, @far_edge = Gdk::Window::EDGE_WEST, Gdk::Window::EDGE_EAST
+				@near_edge, @far_edge = 3,4 # Gdk::Window::EDGE_WEST, Gdk::Window::EDGE_EAST
 
 			when ORIENTATION_UP
 				@menu_box = Gdk::Rectangle.new(MENU_BOX_RELIEF, (@breadth / 2) - (MENU_BOX_HEIGHT / 2), MENU_BOX_WIDTH, MENU_BOX_HEIGHT)
-				@near_edge, @far_edge = Gdk::Window::EDGE_NORTH, Gdk::Window::EDGE_SOUTH
+				@near_edge, @far_edge = 1, 6 # Gdk::Window::EDGE_NORTH, Gdk::Window::EDGE_SOUTH
 		end
-		@window.set_size_request(@breadth, @breadth)
+		self.set_size_request(@breadth, @breadth)
 	end
 
 	def mouse_is_in_window=(value)
 		@mouse_is_in_window = value
-		redraw
+		show_all
 	end
 
 	def grow(amount)	# can be negative
+    w, h = self.size
 		case @orientation
-			when ORIENTATION_LEFT then resize(@canvas.width + amount, @canvas.height)
-			when ORIENTATION_UP then resize(@canvas.width, @canvas.height + amount)
+			when ORIENTATION_LEFT then resize(w + amount, h)
+			when ORIENTATION_UP then resize(w, h + amount)
 		end
 	end
 
@@ -207,24 +222,33 @@ private
 		end
 	end
 
+  def set_preferred_font(cr)
+    # see $preferences_window.font => "Sans 12" by default
+    font_data = $preferences_window.font.split
+    font = font_data[0]
+    fsize = font_data[-1].to_i
+    cr.select_font_face(font,
+                        Cairo::FONT_SLANT_NORMAL,
+                        Cairo::FONT_WEIGHT_NORMAL)
+    cr.set_font_size(fsize)    
+  end
+  
 	###################################################################
 	# Drawing
 	###################################################################
-	def draw(cr)
+	def draw
+    cr = @darea.window.create_cairo_context
 		prepare_rotated_canvas(cr)
-		pangolayout = cr.create_pango_layout.set_font_from_string($preferences_window.font)
-
-		# Background
+    set_preferred_font(cr)
 		cr.set_source_color($preferences_window.background_color)
 		cr.rectangle(0, 0, length, @breadth)
 		cr.fill
-
 		# Foreground lines
 		cr.set_source_color($preferences_window.foreground_color)
 		cr.set_line_width(line_width_for_ppi)
 
 		unit = @@unit_settings[$ruler_popup_menu.unit]
-
+    
 		# Two unit types require special code, as they are unrelated to inches
 		case $ruler_popup_menu.unit
 		when UNIT_PIXELS
@@ -244,7 +268,8 @@ private
 
 		# Loop, drawing ticks (top and bottom) and labels
 		repetitions, tick_index = 0, 0
-		sr_loop(pixels_per_tick, length + OVERDRAW, pixels_per_tick) { |x|
+    x = pixels_per_tick
+    while x < length + OVERDRAW do
 			x = x.floor + 0.5		# Cairo likes lines in the 'center' of pixels
 
 			tick_size = @@tick_sizes[ unit.tick_pattern[tick_index, 1].to_s ]
@@ -257,48 +282,54 @@ private
 			cr.move_to(x, @breadth - tick_size)
 			cr.line_to(x, @breadth - 1.0)	# ...not here either
 			cr.stroke
-
 			# Tick labels (once after each time we complete a tick_pattern)
 			if tick_index == unit.tick_pattern.size - 1
 				repetitions += 1
-				pangolayout.text = sprintf("%d %s", repetitions * units_per_pattern_repetition, (repetitions == 1) ? unit.name : '')
-				cr.show_pango_layout_centered(pangolayout, x, @breadth / 2)		# (see addons_gtk.rb)
+        text = sprintf("%d %s", repetitions * units_per_pattern_repetition,
+                       (repetitions == 1) ? unit.name : '')
+        w, h = 8, 12 # size of the font ?
+        w = w * text.length
+        cr.move_to(x - (w / 2), @breadth / 2 + (h / 2))
+        cr.show_text(text)
 			end
 
-			tick_index = (tick_index + 1) % unit.tick_pattern.size	# tick_index repeats eg. 0->7 if there are 8 in the pattern
-		}
-
-		draw_mouse_tracker(cr) if @enable_mouse_tracking
-
+			tick_index = (tick_index + 1) % unit.tick_pattern.size
+	    # tick_index repeats eg. 0->7 if there are 8 in the pattern
+      
+      x = x + pixels_per_tick
+    end
+    
+    draw_mouse_tracker(cr) if @enable_mouse_tracking
 		draw_menu_button(cr) if @mouse_is_in_window
 
+=begin    
 		# Outline the ruler
 		cr.rectangle(0.5, 0.5, length - 1.0, @breadth - 1.0)
 		cr.stroke
+=end
 	end
 
 	def draw_mouse_tracker(cr)
-		__window__unused__, mouse_x, mouse_y, key_mask = Gdk::Window.default_root_window.pointer
-
-		tooltip_pango_layout = cr.create_pango_layout.set_font_from_string($preferences_window.font)
-
+		__window__unused__, mouse_x, mouse_y, key_mask = self.root_window.pointer
+    
+    set_preferred_font(cr)
 		window_x, window_y = position
-
 		# Determine what measurement to show user
 		progress_pixels = distance_from_zero((mouse_x - window_x), (mouse_y - window_y))
 		progress_pixels = progress_pixels.clamp(0, length)
 
-		tooltip_pango_layout.text = progress_pixels_to_unit_string(progress_pixels)
-		tooltip_width, tooltip_height = tooltip_pango_layout.pixel_size
-
+		text = progress_pixels_to_unit_string(progress_pixels)
+    w, h = 8, 12 # size of the font ?
+    w = w * text.length
+    # w, h = tooltip_pango_layout.pixel_size
 		case @orientation
 			when ORIENTATION_LEFT
-				tooltip_x = (mouse_x - window_x - (tooltip_width / 2.0)).clamp(@menu_box.x + @menu_box.width + @menu_box.x, (length - tooltip_width))
-				tooltip_y = (@breadth - tooltip_height) / 2.0
+				tooltip_x = (mouse_x - window_x - (w / 2.0)).clamp(@menu_box.x + @menu_box.width + @menu_box.x, (length - w))
+				tooltip_y = (@breadth - h) / 2.0
 
 			when ORIENTATION_UP
-				tooltip_x = (mouse_y - window_y - (tooltip_width / 2.0)).clamp(@menu_box.x + @menu_box.width + @menu_box.x, (length - tooltip_width))
-				tooltip_y = (@breadth - tooltip_height) / 2.0
+				tooltip_x = (mouse_y - window_y - (w / 2.0)).clamp(@menu_box.x + @menu_box.width + @menu_box.x, (length - w))
+				tooltip_y = (@breadth - h) / 2.0
 		end
 
 		# Cairo draws crisp lines when coordinates end in .5 (it's already either .0 or .5 due to division above)
@@ -313,16 +344,16 @@ private
 
 		# Fill a box with the background color
 		cr.set_source_color($preferences_window.background_color)
-		cr.rectangle(tooltip_x - 2.0, tooltip_y - 2.0, tooltip_width + 4.0, tooltip_height + 4.0)
+    cr.rectangle(tooltip_x - 2.0, tooltip_y - 2.0, w + 4.0, h + 4.0)
 		cr.fill_preserve		# (preserve so we can outline it below)
 
 		# Draw outline around the box
 		cr.set_source_color($preferences_window.foreground_color)
 		cr.stroke
-
+    
 		# Draw measurement text
-		cr.move_to(tooltip_x, tooltip_y)
-		cr.show_pango_layout(tooltip_pango_layout)
+		cr.move_to(tooltip_x, tooltip_y + h - 2 )
+    cr.show_text(text)
 	end
 
 	def draw_menu_button(cr)
@@ -333,10 +364,12 @@ private
 
 		# Fill with 'horizontal' lines
 		cr.set_source_color($preferences_window.foreground_color)
-		sr_loop(@menu_box.y + 2.5, @menu_box.y + @menu_box.height + -1.5, 2) { |y|
-			cr.move_to(@menu_box.x + 2.0, y)
+    y = @menu_box.y + 2.5
+    while y < @menu_box.y + @menu_box.height + -1.5 do
+      cr.move_to(@menu_box.x + 2.0, y)
 			cr.line_to(@menu_box.x + @menu_box.width - 1, y)
-		}
+      y = y + 2
+    end
 		cr.stroke
 	end
 
@@ -345,7 +378,7 @@ private
 	###################################################################
 	def on_button_press_event(obj, event)
 		case event.event_type
-		when Gdk::Event::BUTTON_PRESS		# single-clicks
+		when Gdk::EventType::BUTTON_PRESS		# single-clicks
 			case event.button
 				when MOUSE_BUTTON_1		# popup, resize, or drag
 					if menu_hit(event.x, event.y)
@@ -362,20 +395,33 @@ private
 				when MOUSE_BUTTON_3		# right-click anywhere = popup menu
 					$ruler_popup_menu.popup(event.x_root, event.y_root, event.x, event.y, event.time)
 			end
-		when Gdk::Event::BUTTON2_PRESS		# double-click = preferences window
+		when Gdk::EventType::BUTTON2_PRESS		# double-click = preferences window
 			$preferences_window.present
 		end
 	end
 
+  def on_enter_notify_event(obj, event)
+    @mouse_is_in_window = true
+    obj.queue_draw
+  end
+  
+  def on_leave_notify_event(obj, event)
+    @mouse_is_in_window = false
+    obj.queue_draw
+  end
+  
+
 	def on_motion_notify_event(obj, event)
 		if menu_hit(event.x, event.y)
-			@window.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND2)
+			self.window.cursor = Gdk::Cursor.new(:hand2)
 		elsif edge = edge_hit(event.x, event.y)
-			lookup = {	Gdk::Window::EDGE_NORTH => Gdk::Cursor::TOP_SIDE, Gdk::Window::EDGE_SOUTH => Gdk::Cursor::BOTTOM_SIDE,
-									Gdk::Window::EDGE_WEST => Gdk::Cursor::LEFT_SIDE, Gdk::Window::EDGE_EAST => Gdk::Cursor::RIGHT_SIDE}
-			@window.window.cursor = Gdk::Cursor.new(lookup[edge])
+			#lookup = {	Gdk::Window::EDGE_NORTH => Gdk::Cursor::TOP_SIDE, Gdk::Window::EDGE_SOUTH => Gdk::Cursor::BOTTOM_SIDE,
+			            #						Gdk::Window::EDGE_WEST => Gdk::Cursor::LEFT_SIDE, Gdk::Window::EDGE_EAST => Gdk::Cursor::RIGHT_SIDE}
+      lookup = {	1 => :top_side, 6 => :bottom_side,
+                  3 => :left_side, 4 => :right_side}
+			self.window.cursor = Gdk::Cursor.new(lookup[edge])
 		else
-			@window.window.cursor = Gdk::Cursor.new(Gdk::Cursor::FLEUR)
+			self.window.cursor = Gdk::Cursor.new(:fleur)
 		end
 	end
 
@@ -385,33 +431,33 @@ private
 
 		if event.state.mod1_mask?		# alt key
 			case event.keyval
-				when Gdk::Keyval::GDK_Right, Gdk::Keyval::GDK_Down then grow(grow_amount)
-				when Gdk::Keyval::GDK_Left, Gdk::Keyval::GDK_Up then grow(-grow_amount)	# shrink ;)
+				when Gdk::Keyval::KEY_Right, Gdk::Keyval::KEY_Down then grow(grow_amount)
+				when Gdk::Keyval::KEY_Left, Gdk::Keyval::KEY_Up then grow(-grow_amount)	# shrink ;)
 				else return false		# not handled
 			end
 		else
 			case event.keyval
 				# quick-change unit measures
-				when Gdk::Keyval::GDK_1 then $ruler_popup_menu.unit = UNIT_PIXELS
-				when Gdk::Keyval::GDK_2 then $ruler_popup_menu.unit = UNIT_CENTIMETERS
-				when Gdk::Keyval::GDK_3 then $ruler_popup_menu.unit = UNIT_INCHES
-				when Gdk::Keyval::GDK_4 then $ruler_popup_menu.unit = UNIT_PICAS
-				when Gdk::Keyval::GDK_5 then $ruler_popup_menu.unit = UNIT_POINTS
-				when Gdk::Keyval::GDK_6 then $ruler_popup_menu.unit = UNIT_PERCENTAGE
+				when Gdk::Keyval::KEY_1 then $ruler_popup_menu.unit = UNIT_PIXELS
+				when Gdk::Keyval::KEY_2 then $ruler_popup_menu.unit = UNIT_CENTIMETERS
+				when Gdk::Keyval::KEY_3 then $ruler_popup_menu.unit = UNIT_INCHES
+				when Gdk::Keyval::KEY_4 then $ruler_popup_menu.unit = UNIT_PICAS
+				when Gdk::Keyval::KEY_5 then $ruler_popup_menu.unit = UNIT_POINTS
+				when Gdk::Keyval::KEY_6 then $ruler_popup_menu.unit = UNIT_PERCENTAGE
 
 				# move ruler by keyboard
-				when Gdk::Keyval::GDK_Left	then offset(-move_distance, 0)
-				when Gdk::Keyval::GDK_Right	then offset( move_distance, 0)
-				when Gdk::Keyval::GDK_Up		then offset(0, -move_distance)
-				when Gdk::Keyval::GDK_Down	then offset(0,  move_distance)
+				when Gdk::Keyval::KEY_Left	then offset(-move_distance, 0)
+				when Gdk::Keyval::KEY_Right	then offset( move_distance, 0)
+				when Gdk::Keyval::KEY_Up		then offset(0, -move_distance)
+				when Gdk::Keyval::KEY_Down	then offset(0,  move_distance)
 
 				# hide ruler
-				when Gdk::Keyval::GDK_Escape then Gtk.main_quit
+				when Gdk::Keyval::KEY_Escape then Gtk.main_quit
 
 				# show menu via keyboard
-				when Gdk::Keyval::GDK_Return												# popup menu (provide "click point" in case user chooses 'rotate')
+				when Gdk::Keyval::KEY_Return												# popup menu (provide "click point" in case user chooses 'rotate')
 					offset_x, offset_y = @breadth / 2, @breadth / 2		# provides a visually appealing rotation
-					$ruler_popup_menu.popup(@window.position[0] + offset_x, @window.position[1] + offset_y, offset_x, offset_y, event.time)
+					$ruler_popup_menu.popup(self.position[0] + offset_x, self.position[1] + offset_y, offset_x, offset_y, event.time)
 				else return false		# not handled
 			end
 		end
@@ -432,8 +478,13 @@ private
 		end
 	end
 
-	def menu_hit(x, y)
-		@menu_box.grow(2).contains(x,y)		# grow a little to be easier to click on
+	def menu_hit(xc, yc, tolerance = 2)
+    # check x,y with a precision +- 2px to make it easier to click on menu
+    return false if xc < @menu_box.x - tolerance
+    return false if yc < @menu_box.y - tolerance
+    return false if xc > @menu_box.x + @menu_box.width + tolerance
+	  return false if yc > @menu_box.y + @menu_box.height + tolerance
+    return true
 	end
 
 	###################################################################
@@ -448,6 +499,35 @@ private
 	end
 end
 
+if __FILE__ == $0
+  SETTINGS_SUBDIRECTORY_NAME = 'screenruler'
+  SETTINGS_FILE_NAME = 'settings.yml'
+  require 'settings'
+  require_relative 'preferences_window'
+  require_relative 'ruler_popup_menu'
+  require 'gettext'		# Internationalization Support
+  include GetText
+  
+  #
+  # Load Settings
+  #
+  settings_directory = File.join(GLib.user_config_dir, SETTINGS_SUBDIRECTORY_NAME)
+  Dir.mkdir(GLib.user_config_dir) rescue nil ; Dir.mkdir(settings_directory) rescue nil
+  settings_file_path = File.join(settings_directory, SETTINGS_FILE_NAME)
+  settings = Settings.new.load(settings_file_path)
+  puts _('Creating windows...')
+	$preferences_window = PreferencesWindow.new
+	$ruler_window = RulerWindow.new
+	$ruler_popup_menu = RulerPopupMenu.new
+  
+  puts _('Reading settings...')
+	$preferences_window.read_settings(settings)
+	$ruler_window.read_settings(settings)
+	$ruler_popup_menu.read_settings(settings)
+  
+  $ruler_window.show_all
+  Gtk.main
+end
 # Local Variables:
 # tab-width: 2
 # End:
