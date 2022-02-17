@@ -11,8 +11,13 @@ screenruler (1.0-1) unstable; urgency=medium
     + added Makefiles
     + authored a French translation
     + new directory for .mo files
+  * added a shell script to launch an installed package of screenruler:
+    screenruler.sh
+  * using rxgettext to match Ruby files
+  * migrated Ruby files and Glade files to Gtk3. Closes: #1000689
+  * removed old GTK hacks which were in utils/addons_gtk.rb
 
- -- Georges Khaznadar <georgesk@debian.org>  Tue, 15 Feb 2022 17:32:29 +0100
+ -- Georges Khaznadar <georgesk@debian.org>  Thu, 17 Feb 2022 20:32:55 +0100
 
 screenruler (0.960+bzr41+deb10-6) unstable; urgency=medium
 
