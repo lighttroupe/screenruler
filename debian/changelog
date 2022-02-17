@@ -16,6 +16,7 @@ screenruler (1.0-1) unstable; urgency=medium
   * using rxgettext to match Ruby files
   * migrated Ruby files and Glade files to Gtk3. Closes: #1000689
   * removed old GTK hacks which were in utils/addons_gtk.rb
+  * bumped Standards-Version: 4.6.0, debhelper-compat (= 13)
 
  -- Georges Khaznadar <georgesk@debian.org>  Thu, 17 Feb 2022 20:32:55 +0100
 
