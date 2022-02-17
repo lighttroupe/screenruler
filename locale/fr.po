@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-15 18:37+0100\n"
+"POT-Creation-Date: 2022-02-17 23:07+0100\n"
 "PO-Revision-Date: 2022-02-15 16:57+0100\n"
 "Last-Translator: Georges Khaznadar <georgesk@debian.org>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -17,31 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../ruler_window.rb:40
-msgid "in"
-msgstr "in"
+#: ../ruler_window.rb:518 ../screenruler.rb:76
+msgid "Creating windows..."
+msgstr "Création des fenêtres ..."
 
-#: ../ruler_window.rb:41
-msgid "cm"
-msgstr "cm"
+#: ../ruler_window.rb:523 ../screenruler.rb:82
+msgid "Reading settings..."
+msgstr "Lecture des réglages ..."
 
-#: ../ruler_window.rb:42
-msgid "pc"
-msgstr "pc"
-
-#: ../ruler_window.rb:43
-msgid "pt"
-msgstr "pt"
-
-#: ../ruler_window.rb:44
-msgid "px"
-msgstr "px"
-
-#: ../ruler_window.rb:45
-msgid "%"
-msgstr "%"
-
-#: ../screenruler.rb:36
+#: ../screenruler.rb:35
 msgid "Screen Ruler"
 msgstr "Règle d'écran"
 
@@ -49,18 +33,28 @@ msgstr "Règle d'écran"
 msgid "Loading libraries..."
 msgstr "Chargement des bibliothèques ..."
 
-#: ../screenruler.rb:75
-msgid "Creating windows..."
-msgstr "Création des fenêtres ..."
-
-#: ../screenruler.rb:81
-msgid "Reading settings..."
-msgstr "Lecture des réglages ..."
-
-#: ../screenruler.rb:86
+#: ../screenruler.rb:87
 msgid "Presenting ruler..."
 msgstr "Présentation de la règle ..."
 
-#: ../screenruler.rb:92
+#: ../screenruler.rb:93
 msgid "Shutting down..."
 msgstr "Fermeture ..."
+
+#~ msgid "in"
+#~ msgstr "in"
+
+#~ msgid "cm"
+#~ msgstr "cm"
+
+#~ msgid "pc"
+#~ msgstr "pc"
+
+#~ msgid "pt"
+#~ msgstr "pt"
+
+#~ msgid "px"
+#~ msgstr "px"
+
+#~ msgid "%"
+#~ msgstr "%"
