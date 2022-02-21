@@ -1,3 +1,11 @@
+screenruler (1.0-2) unstable; urgency=medium
+
+  * modified a dependency: ruby-gtk2 => ruby-gtk3.
+    maybe ... Closes: #1006168
+  * clear a previous bug report also. Closes: #1000230
+
+ -- Georges Khaznadar <georgesk@debian.org>  Mon, 21 Feb 2022 16:38:37 +0100
+
 screenruler (1.0-1) unstable; urgency=medium
 
   * New upstream changes:

@@ -14,7 +14,7 @@ Package: screenruler
 Architecture: all
 Depends: ${misc:Depends},
  ruby | ruby-interpreter,
- ruby-gtk2,
+ ruby-gtk3,
  ruby-cairo,
  ruby-cairo-gobject,
  ruby-gettext,
