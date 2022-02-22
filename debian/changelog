@@ -1,3 +1,10 @@
+screenruler (1.1-1) UNRELEASED; urgency=medium
+
+  * new upstream version
+  * use rescue only for Errno::EEXIST
+
+ -- Georges Khaznadar <georgesk@debian.org>  Tue, 22 Feb 2022 18:14:32 +0100
+
 screenruler (1.0-2) unstable; urgency=medium
 
   * modified a dependency: ruby-gtk2 => ruby-gtk3.
