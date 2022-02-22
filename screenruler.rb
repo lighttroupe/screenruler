@@ -66,7 +66,16 @@ APP_ICON_LIST = ['screenruler-icon-16x16.png', 'screenruler-icon-32x32.png', 'sc
 # Load Settings
 #
 settings_directory = File.join(GLib.user_config_dir, SETTINGS_SUBDIRECTORY_NAME)
-Dir.mkdir(GLib.user_config_dir) rescue nil ; Dir.mkdir(settings_directory) rescue nil
+begin
+  Dir.mkdir(GLib.user_config_dir)
+rescue Errno::EEXIST
+  nil
+end
+begin
+  Dir.mkdir(settings_directory)
+rescue Errno::EEXIST
+  nil
+end
 settings_file_path = File.join(settings_directory, SETTINGS_FILE_NAME)
 settings = Settings.new.load(settings_file_path)
 
