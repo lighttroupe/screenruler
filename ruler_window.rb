@@ -64,7 +64,6 @@ class RulerWindow < GladeWindow
 		self.icon_list = APP_ICON_LIST
 
 		# Fill our window with a Drawing Area to render the ruler
-    w, h = self.size
     @darea = Gtk::DrawingArea.new
     add(@darea)
     @darea.signal_connect('draw') do  
