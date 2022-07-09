@@ -17,11 +17,6 @@
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
 
-if __FILE__ == $0
-  require 'gtk3'
-  $LOAD_PATH << './utils'
-end
-
 require 'glade_window'
 
 class HelpWindow < GladeWindow
@@ -41,11 +36,6 @@ class HelpWindow < GladeWindow
   
 end
 
-if __FILE__ == $0
-  window = HelpWindow.new
-  window.show
-  Gtk.main
-end
 
 # Local Variables:
 # tab-width: 2

@@ -16,16 +16,6 @@
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
 
-if __FILE__ == $0
-  require 'gtk3'
-  $LOAD_PATH << './utils'
-  UNIT_PIXELS, UNIT_CENTIMETERS, UNIT_INCHES, UNIT_PICAS, UNIT_POINTS, UNIT_PERCENTAGE = (0..5).to_a
-  APP_ICON_LIST = ['screenruler-icon-16x16.png', 'screenruler-icon-32x32.png',
-                   'screenruler-icon-64x64.png'].collect {
-    |filename| GdkPixbuf::Pixbuf.new(:file => filename)
-  }
-end
-
 require 'unique_timeout'
 require_relative 'ruler_popup_menu'
 
@@ -64,7 +54,6 @@ class RulerWindow < GladeWindow
 		self.icon_list = APP_ICON_LIST
 
 		# Fill our window with a Drawing Area to render the ruler
-    w, h = self.size
     @darea = Gtk::DrawingArea.new
     add(@darea)
     @darea.signal_connect('draw') do  
@@ -499,35 +488,6 @@ private
 	end
 end
 
-if __FILE__ == $0
-  SETTINGS_SUBDIRECTORY_NAME = 'screenruler'
-  SETTINGS_FILE_NAME = 'settings.yml'
-  require 'settings'
-  require_relative 'preferences_window'
-  require_relative 'ruler_popup_menu'
-  require 'gettext'		# Internationalization Support
-  include GetText
-  
-  #
-  # Load Settings
-  #
-  settings_directory = File.join(GLib.user_config_dir, SETTINGS_SUBDIRECTORY_NAME)
-  Dir.mkdir(GLib.user_config_dir) rescue nil ; Dir.mkdir(settings_directory) rescue nil
-  settings_file_path = File.join(settings_directory, SETTINGS_FILE_NAME)
-  settings = Settings.new.load(settings_file_path)
-  puts _('Creating windows...')
-	$preferences_window = PreferencesWindow.new
-	$ruler_window = RulerWindow.new
-	$ruler_popup_menu = RulerPopupMenu.new
-  
-  puts _('Reading settings...')
-	$preferences_window.read_settings(settings)
-	$ruler_window.read_settings(settings)
-	$ruler_popup_menu.read_settings(settings)
-  
-  $ruler_window.show_all
-  Gtk.main
-end
 # Local Variables:
 # tab-width: 2
 # End:
