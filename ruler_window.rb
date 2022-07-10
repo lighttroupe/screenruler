@@ -1,5 +1,5 @@
  ###############################################################################
- #  Copyright 2011 Ian McIntosh <ian@openanswers.org>
+ #  Copyright 2022 Ian McIntosh <ian@openanswers.org>
  #
  #  This program is free software; you can redistribute it and/or modify
  #  it under the terms of the GNU General Public License as published by
@@ -262,7 +262,7 @@ private
 		while x_progress < (length + OVERDRAW) do
 			x = x_progress.floor + 0.5		# Cairo likes lines in the 'center' of pixels
 
-			tick_size = @@tick_sizes[ unit.tick_pattern[tick_index, 1].to_s ]
+			tick_size = @@tick_sizes[unit.tick_pattern[tick_index, 1].to_s]
 
 			# Top tick
 			cr.move_to(x, 1.0)						# don't double-draw border pixel here...
@@ -276,17 +276,14 @@ private
 			# Tick labels (once after each time we complete a tick_pattern)
 			if tick_index == (unit.tick_pattern.size - 1)
 				repetitions += 1
-				text = sprintf("%d %s", repetitions * units_per_pattern_repetition,
-											 (repetitions == 1) ? unit.name : '')
-				w, h = 8, 12 # size of the font ?
+				text = sprintf("%d %s", repetitions * units_per_pattern_repetition, (repetitions == 1) ? unit.name : '')
+				w, h = 8, 12		# TODO: retrieve actual size of selected font
 				w *= text.length
 				cr.move_to(x - (w / 2), @breadth / 2 + (h / 2))
 				cr.show_text(text)
 			end
 
-			tick_index = (tick_index + 1) % unit.tick_pattern.size
-			# tick_index repeats eg. 0->7 if there are 8 in the pattern
-
+			tick_index = (tick_index + 1) % unit.tick_pattern.size		# tick_index repeats eg. 0->7 if there are 8 in the pattern
 			x_progress += pixels_per_tick
 		end
 
@@ -294,8 +291,8 @@ private
 		draw_menu_button(cr) if @mouse_is_in_window
 
 		# Outline the ruler
-		# cr.rectangle(0.5, 0.5, length - 1.0, @breadth - 1.0)
-		# cr.stroke
+		cr.rectangle(0.5, 0.5, length - 1.0, @breadth - 1.0)
+		cr.stroke
 	end
 
 	def draw_mouse_tracker(cr)

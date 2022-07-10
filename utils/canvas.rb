@@ -1,5 +1,5 @@
  ###############################################################################
- #  Copyright 2008 Ian McIntosh <ian@openanswers.org>
+ #  Copyright 2022 Ian McIntosh <ian@openanswers.org>
  #
  #  This program is free software; you can redistribute it and/or modify
  #  it under the terms of the GNU General Public License as published by
@@ -23,25 +23,21 @@ require 'delegate'
 class Canvas < Cairo::ImageSurface
 	attr_reader :widget, :height, :width
 
-	def initialize (window, width = 100, height = 100)
-    super(Cairo::Format::RGB24, height, width)
-    @cr = Cairo::Context.new(self)
-    @parent = window
-    @width = width
-    @height= height
+	def initialize (window, width=100, height=100)
+		super(Cairo::Format::RGB24, height, width)
+		@cr = Cairo::Context.new(self)
+		@parent = window
+		@width = width
+		@height= height
 
-		# GTK Signal Handlers
-	  window.signal_connect('configure-event') { |obj, event|		# Widget changed size
-			@width, @height = event.width, event.height		# save it
-      puts("===debug in event configure-event====", window)
+		window.signal_connect('configure-event') { |obj, event|		# Widget changed size
+			@width, @height = event.width, event.height
 		}
-    
-		window.signal_connect('draw') { |obj, event|				# Widget changed visibility
-      puts("===debug in event draw====", window)
+
+		window.signal_connect('draw') { |obj, event|							# Widget changed visibility
 			@redraw_needed = false
 		}
 	end
-
 end
 
 # Local Variables:

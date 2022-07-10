@@ -4,7 +4,7 @@ Upstream-Maintainer: Ian McIntosh <ian@openanswers.org>
 Upstream-Source: https://code.launchpad.net/~ian-mcintosh/screenruler/trunk
 
 Files: *
-Copyright: © 2008-2011 Ian McIntosh <ian@openanswers.org>
+Copyright: © 2008-2022 Ian McIntosh <ian@openanswers.org>
 License: GPL-2
 
 Files: debian/*
@@ -21,5 +21,5 @@ License: GPL-2
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  Please see `/usr/share/common-licenses/GPL-2'.

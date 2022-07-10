@@ -1,5 +1,5 @@
  ###############################################################################
- #  Copyright 2011 Ian McIntosh <ian@openanswers.org>
+ #  Copyright 2022 Ian McIntosh <ian@openanswers.org>
  #  Copyright 2022 Georges Khaznadar <georgesk@debian.org> (migration to gtk3)
  #
  #  This program is free software; you can redistribute it and/or modify
