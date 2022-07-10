@@ -16,50 +16,11 @@
  #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  ###############################################################################
 
-# extend/simplify/standardize some Ruby objects
-
-class String
-	def limit(max_length, indicator='...')
-		return self[0, max_length] + indicator if length > max_length
-		return self
-	end
-end
-
-class Dir
-	def each_matching(pattern)	# patterns like '*.png'
-		each { |filename|	yield filename if File.fnmatch(pattern, filename) }
-	end
-end
-
 class Numeric
 	def clamp(low, high)
 		return low if self <= low
 		return high if self >= high
 		return self
-	end
-end
-
-class Fixnum
-	def within?(low, high)
-		return (to_i >= low and to_i <= high)
-	end
-end
-
-class Object
-	def to_a
-		return self if is_a?(Array)
-		return [self]
-	end
-end
-
-module Kernel
-
-	def sr_loop(from, to, step=1)
-		i = from
-		while i <= to
-			yield i
-			i += step
-		end
 	end
 end
 

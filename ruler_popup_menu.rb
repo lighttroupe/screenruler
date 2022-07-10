@@ -36,7 +36,7 @@ class RulerPopupMenu < GladeWindow
 	end
 
 	def track_mouse?
-		return @track_mouse_menuitem.active?
+		@track_mouse_menuitem.active?
 	end
 
 	def keep_above=(val)
@@ -44,7 +44,7 @@ class RulerPopupMenu < GladeWindow
 	end
 
 	def keep_above?
-		return @keep_above_menuitem.active?
+		@keep_above_menuitem.active?
 	end
 
 	def popup(root_x, root_y, x, y, time)

@@ -23,19 +23,17 @@ class HelpWindow < GladeWindow
 	def initialize
 		super('help_window')
 		@window.signal_connect('delete_event') { hide }
-    @window.signal_connect('key_press_event') { |w,e|
-      if e.keyval == Gdk::Keyval::KEY_Escape
-        hide
-      end
-    }
+		@window.signal_connect('key_press_event') { |_window, event|
+			if event.keyval == Gdk::Keyval::KEY_Escape
+				hide
+			end
+		}
 	end
 
 	def on_close_button_clicked
 		hide
 	end
-  
 end
-
 
 # Local Variables:
 # tab-width: 2

@@ -26,9 +26,9 @@ require 'gettext'		# Internationalization Support
 include GetText
 bindtextdomain("screenruler", :path => "locale")
 
-###################################################################
+#
 # Constants
-###################################################################
+#
 UNIT_PIXELS, UNIT_CENTIMETERS, UNIT_INCHES, UNIT_PICAS, UNIT_POINTS, UNIT_PERCENTAGE = (0..5).to_a
 UNIT_LAST = UNIT_PERCENTAGE
 
@@ -43,9 +43,9 @@ APP_LOGO_FILENAME = 'screenruler-logo.png'
 SETTINGS_SUBDIRECTORY_NAME = 'screenruler'
 SETTINGS_FILE_NAME = 'settings.yml'
 
-###################################################################
+#
 # Includes
-###################################################################
+#
 puts _('Loading libraries...')
 
 require 'addons_ruby'									# for multi-file 'require'
@@ -56,25 +56,21 @@ require_relative 'ruler_window'
 require_relative 'preferences_window'
 require_relative 'help_window'
 
-###################################################################
-# Main
-###################################################################
-
-APP_ICON_LIST = ['screenruler-icon-16x16.png', 'screenruler-icon-32x32.png', 'screenruler-icon-64x64.png'].collect { |filename| GdkPixbuf::Pixbuf.new(:file => filename) }
+APP_ICON_LIST = ['screenruler-icon-16x16.png', 'screenruler-icon-32x32.png', 'screenruler-icon-64x64.png'].map { |filename|
+	GdkPixbuf::Pixbuf.new(:file => filename)
+}
 
 #
 # Load Settings
 #
 settings_directory = File.join(GLib.user_config_dir, SETTINGS_SUBDIRECTORY_NAME)
 begin
-  Dir.mkdir(GLib.user_config_dir)
+	Dir.mkdir(GLib.user_config_dir)
 rescue Errno::EEXIST
-  nil
 end
 begin
-  Dir.mkdir(settings_directory)
+	Dir.mkdir(settings_directory)
 rescue Errno::EEXIST
-  nil
 end
 settings_file_path = File.join(settings_directory, SETTINGS_FILE_NAME)
 settings = Settings.new.load(settings_file_path)

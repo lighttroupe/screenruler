@@ -34,17 +34,17 @@ class PreferencesWindow < GladeWindow
 
 		@system_ppi_setting_label.markup = sprintf("(%d x %d)", system_ppi_horizontal, system_ppi_vertical)
 
-    @window.signal_connect('key_press_event') { |w,e|
-      if e.keyval == Gdk::Keyval::KEY_Escape
-        hide
-      end
-    }
+		@window.signal_connect('key_press_event') { |_window, event|
+			if event.keyval == Gdk::Keyval::KEY_Escape
+				hide
+			end
+		}
 	end
 
-	def foreground_color ; return @foreground_color_button.color ; end
-	def background_color ; return @background_color_button.color ; end
-	def font ; return @text_fontbutton.font_name ; end
-	def watch_mouse? ; return @watch_mouse_checkbutton.active? ; end
+	def foreground_color ; @foreground_color_button.color ; end
+	def background_color ; @background_color_button.color ; end
+	def font ; @text_fontbutton.font_name ; end
+	def watch_mouse? ; @watch_mouse_checkbutton.active? ; end
 	def watch_mouse=(value) ; @watch_mouse_checkbutton.active = value ; end
 	attr_reader :opacity
 
@@ -90,17 +90,14 @@ class PreferencesWindow < GladeWindow
 		settings['vertical_pixels_per_inch'] = @ppi_vertical_spinbutton.value
 	end
 
-	def present
-		super ; super ; super		# TODO: remove this hack when it's no longer needed to prevent window from popping up UNDER the ruler (on Ubuntu 8.04)
-	end
-
 private
 
-	###################################################################
+	#
 	# Signal Handlers
-	###################################################################
+	#
 	def on_style_changed
 		$ruler_window.show_all
+		$ruler_window.queue_draw
 	end
 
 	def on_ppi_vertical_spinbutton_changed
@@ -121,7 +118,6 @@ private
 		hide
 	end
 end
-
 
 # Local Variables:
 # tab-width: 2
