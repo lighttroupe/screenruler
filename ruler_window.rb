@@ -120,8 +120,8 @@ class RulerWindow < GladeWindow
 	def length
 		w, h = self.size
 		case @orientation
-			when ORIENTATION_LEFT	then w
-			when ORIENTATION_UP		then h
+		when ORIENTATION_LEFT	then w
+		when ORIENTATION_UP		then h
 		end
 	end
 
@@ -131,20 +131,20 @@ class RulerWindow < GladeWindow
 
 	def pixels_per_inch
 		case @orientation
-			when ORIENTATION_LEFT	then $preferences_window.ppi_horizontal
-			when ORIENTATION_UP		then $preferences_window.ppi_vertical
+		when ORIENTATION_LEFT	then $preferences_window.ppi_horizontal
+		when ORIENTATION_UP		then $preferences_window.ppi_vertical
 		end
 	end
 
 	def rotate(root_x, root_y, window_x, window_y)
 		case @orientation
-			when ORIENTATION_LEFT		# rotate to ORIENTATION_UP
-				self.window.move_resize(root_x - (@breadth - window_y), root_y - window_x, @breadth, length)
-				@orientation = ORIENTATION_UP
+		when ORIENTATION_LEFT		# rotate to ORIENTATION_UP
+			self.window.move_resize(root_x - (@breadth - window_y), root_y - window_x, @breadth, length)
+			@orientation = ORIENTATION_UP
 
-			when ORIENTATION_UP
-				self.window.move_resize(root_x - window_y, root_y - (@breadth - window_x), length, @breadth)
-				@orientation = ORIENTATION_LEFT
+		when ORIENTATION_UP
+			self.window.move_resize(root_x - window_y, root_y - (@breadth - window_x), length, @breadth)
+			@orientation = ORIENTATION_LEFT
 		end
 		configure_orientation
 	end
@@ -171,20 +171,19 @@ private
 
 	def distance_from_zero(x, y)
 		case @orientation
-			when ORIENTATION_LEFT then x
-			when ORIENTATION_UP		then y
+		when ORIENTATION_LEFT then x
+		when ORIENTATION_UP		then y
 		end
 	end
 
 	def configure_orientation		# make changes necessary for a new orientation
 		case @orientation
-			when ORIENTATION_LEFT
-				@menu_box = Gdk::Rectangle.new(MENU_BOX_RELIEF, (@breadth / 2) - (MENU_BOX_HEIGHT / 2), MENU_BOX_WIDTH, MENU_BOX_HEIGHT)
-				@near_edge, @far_edge = 3,4 # Gdk::Window::EDGE_WEST, Gdk::Window::EDGE_EAST
-
-			when ORIENTATION_UP
-				@menu_box = Gdk::Rectangle.new(MENU_BOX_RELIEF, (@breadth / 2) - (MENU_BOX_HEIGHT / 2), MENU_BOX_WIDTH, MENU_BOX_HEIGHT)
-				@near_edge, @far_edge = 1, 6 # Gdk::Window::EDGE_NORTH, Gdk::Window::EDGE_SOUTH
+		when ORIENTATION_LEFT
+			@menu_box = Gdk::Rectangle.new(MENU_BOX_RELIEF, (@breadth / 2) - (MENU_BOX_HEIGHT / 2), MENU_BOX_WIDTH, MENU_BOX_HEIGHT)
+			@near_edge, @far_edge = 3,4 # Gdk::Window::EDGE_WEST, Gdk::Window::EDGE_EAST
+		when ORIENTATION_UP
+			@menu_box = Gdk::Rectangle.new(MENU_BOX_RELIEF, (@breadth / 2) - (MENU_BOX_HEIGHT / 2), MENU_BOX_WIDTH, MENU_BOX_HEIGHT)
+			@near_edge, @far_edge = 1, 6 # Gdk::Window::EDGE_NORTH, Gdk::Window::EDGE_SOUTH
 		end
 		self.set_size_request(@breadth, @breadth)
 	end
@@ -197,16 +196,16 @@ private
 	def grow(amount)	# can be negative
 		w, h = self.size
 		case @orientation
-			when ORIENTATION_LEFT then resize(w + amount, h)
-			when ORIENTATION_UP then resize(w, h + amount)
+		when ORIENTATION_LEFT then resize(w + amount, h)
+		when ORIENTATION_UP then resize(w, h + amount)
 		end
 	end
 
 	def prepare_rotated_canvas(cr)
 		case @orientation
-			when ORIENTATION_UP
-				cr.translate(@breadth, 0)
-				cr.rotate(Math::PI / 2)
+		when ORIENTATION_UP
+			cr.translate(@breadth, 0)
+			cr.rotate(Math::PI / 2)
 		end
 	end
 
@@ -259,9 +258,9 @@ private
 
 		# Draw top and bottom ticks and labels
 		repetitions, tick_index = 0, 0
-		x = pixels_per_tick
-		while x < (length + OVERDRAW) do
-			x = x.floor + 0.5		# Cairo likes lines in the 'center' of pixels
+		x_progress = pixels_per_tick
+		while x_progress < (length + OVERDRAW) do
+			x = x_progress.floor + 0.5		# Cairo likes lines in the 'center' of pixels
 
 			tick_size = @@tick_sizes[ unit.tick_pattern[tick_index, 1].to_s ]
 
@@ -288,7 +287,7 @@ private
 			tick_index = (tick_index + 1) % unit.tick_pattern.size
 			# tick_index repeats eg. 0->7 if there are 8 in the pattern
 
-			x += pixels_per_tick
+			x_progress += pixels_per_tick
 		end
 
 		draw_mouse_tracker(cr) if @enable_mouse_tracking
